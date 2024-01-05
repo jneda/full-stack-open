@@ -1,0 +1,25 @@
+.filter {
+  margin-block-end: 1rem;
+}
+
+.country-list-item {
+  display: flex;
+  align-items: center;
+}
+
+.country-list-item p {
+  margin-block: 0.6rem;
+}
+
+.country-list-item button {
+  margin-inline-start: 1rem;
+}
+
+.weather {
+  display: flex;
+  flex-direction: column;
+}
+
+.weather img {
+  width: 100px;
+}
