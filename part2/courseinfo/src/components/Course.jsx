@@ -27,7 +27,7 @@ const Total = ({ course }) => {
   const total = parts.reduce((total, part) => total + part.exercises, 0);
   return (
     <p>
-      <b>total of {total} exercises</b>
+      <b>Total of {total} exercises</b>
     </p>
   );
 };
