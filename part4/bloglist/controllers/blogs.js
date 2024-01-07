@@ -9,10 +9,6 @@ blogsRouter.get("/api/blogs", async (request, response) => {
 blogsRouter.post("/api/blogs", async (request, response) => {
   const body = request.body;
 
-  if (body.title === undefined || body.url === undefined) {
-    return response.status(400).end();
-  }
-
   const newBlog = {
     title: body.title,
     author: body.author,
@@ -26,8 +22,29 @@ blogsRouter.post("/api/blogs", async (request, response) => {
   response.status(201).json(createdBlog);
 });
 
+blogsRouter.put("/api/blogs/:id", async (request, response) => {
+  const update = request.body;
+
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, update, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  });
+
+  if (!updatedBlog) {
+    throw new Error("Resource not found.");
+  }
+
+  response.json(updatedBlog);
+});
+
 blogsRouter.delete("/api/blogs/:id", async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id);
+  const result = await Blog.findByIdAndDelete(request.params.id);
+
+  if (!result) {
+    throw new Error("Resource not found.");
+  }
+
   response.status(204).end();
 });
 

@@ -120,9 +120,73 @@ describe("deleting a note", () => {
 
     expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1);
 
-    console.log(blogsAtEnd);
-
     expect(blogsAtEnd).not.toContainEqual(blogToDelete);
+  });
+
+  test("should fail with status code 404 if note does not exist", async () => {
+    const validNonExistingId = await helper.nonExistingId();
+
+    await api.delete(`/api/blogs/${validNonExistingId}`).expect(404);
+  });
+
+  test("should fail with status code 400 if id is invalid", async () => {
+    const invalidId = "thisisnotavalidid";
+
+    await api.delete(`/api/blogs/${invalidId}`).expect(400);
+  });
+});
+
+describe("updating a note", () => {
+  test("should succeed when providing valid id and update data", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToUpdate = blogsAtStart[0];
+    const update = {
+      ...blogToUpdate,
+      likes: 42,
+    };
+
+    const response = await api
+      .put(`${baseUrl}/${blogToUpdate.id}`)
+      .send(update)
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const updatedBlog = response.body;
+
+    expect(updatedBlog.likes).toBe(42);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd).toContainEqual(update);
+  });
+
+  test("should fail with status code 404 when providing a valid but non existing id", async () => {
+    const nonExistingId = await helper.nonExistingId();
+
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToUpdate = blogsAtStart[0];
+    const update = {
+      ...blogToUpdate,
+      likes: 42,
+    };
+
+    await api.put(`${baseUrl}/${nonExistingId}`).send(update).expect(404);
+  });
+
+  test("should fail with status code 400 when providing an invalid id", async () => {
+    const invalidId = "thisisdefinitelynotvalid";
+
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToUpdate = blogsAtStart[0];
+    const update = {
+      ...blogToUpdate,
+      likes: 42,
+    };
+
+    await api.put(`${baseUrl}/${invalidId}`).send(update).expect(400);
   });
 });
 

@@ -21,6 +21,17 @@ const initialBlogs = [
   },
 ];
 
+const nonExistingId = async () => {
+  const blog = new Blog({
+    title: "willremovethissoon",
+    url: "http://goingnowhere.com",
+  });
+  await blog.save();
+  await blog.deleteOne();
+
+  return blog._id.toString();
+};
+
 const blogsInDb = async () => (await Blog.find({})).map((b) => b.toJSON());
 
-module.exports = { initialBlogs, blogsInDb };
+module.exports = { initialBlogs, nonExistingId, blogsInDb };
