@@ -9,11 +9,7 @@ const baseUrl = "/api/blogs";
 
 beforeEach(async () => {
   await Blog.deleteMany();
-
-  for (const blog of helper.initialBlogs) {
-    const blogDoc = new Blog(blog);
-    await blogDoc.save();
-  }
+  await Blog.insertMany(helper.initialBlogs);
 });
 
 describe("get all blogs", () => {
@@ -109,6 +105,24 @@ describe("on sending incomplete data when creating a blog", () => {
 
     const notesAtEnd = await helper.blogsInDb();
     expect(notesAtEnd.length).toBe(helper.initialBlogs.length);
+  });
+});
+
+describe("deleting a note", () => {
+  test("should succeed with status code 204 when providing a valid id", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+
+    const blogToDelete = blogsAtStart[0];
+
+    await api.delete(`${baseUrl}/${blogToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await helper.blogsInDb();
+
+    expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1);
+
+    console.log(blogsAtEnd);
+
+    expect(blogsAtEnd).not.toContainEqual(blogToDelete);
   });
 });
 
