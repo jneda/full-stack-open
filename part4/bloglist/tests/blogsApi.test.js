@@ -7,7 +7,7 @@ const helper = require("./testHelper");
 const api = supertest(app);
 const baseUrl = "/api/blogs";
 
-beforeAll(async () => {
+beforeEach(async () => {
   await Blog.deleteMany();
 
   for (const blog of helper.initialBlogs) {
@@ -94,6 +94,9 @@ describe("on sending incomplete data when creating a blog", () => {
     };
 
     await api.post(baseUrl).send(newBlog).expect(400);
+
+    const notesAtEnd = await helper.blogsInDb();
+    expect(notesAtEnd.length).toBe(helper.initialBlogs.length);
   });
 
   test("it should respond with status code 400 when url is missing", async () => {
@@ -103,6 +106,9 @@ describe("on sending incomplete data when creating a blog", () => {
     };
 
     await api.post(baseUrl).send(newBlog).expect(400);
+
+    const notesAtEnd = await helper.blogsInDb();
+    expect(notesAtEnd.length).toBe(helper.initialBlogs.length);
   });
 });
 
