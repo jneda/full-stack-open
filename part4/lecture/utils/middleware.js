@@ -21,6 +21,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: error.message });
   }
 
+  if (error.message === "User not found.") {
+    return response.status(400).send({ error: error.message });
+  }
+
   next(error);
 };
 

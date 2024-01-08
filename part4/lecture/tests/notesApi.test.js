@@ -65,10 +65,21 @@ describe("viewing a specific note", () => {
 });
 
 describe("addition of a new note", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    const user = new User({ username: "root", passwordHash });
+    await user.save();
+  });
+
   test("succeeds with valid data", async () => {
+    const users = await helper.usersInDb();
+    const userId = users[0].id;
+
     const newNote = {
       content: "async/await simplifies making async calls",
       important: true,
+      userId,
     };
 
     await api
@@ -85,7 +96,23 @@ describe("addition of a new note", () => {
   });
 
   test("fails with status code 400 if data is invalid", async () => {
+    const users = await helper.usersInDb();
+    const userId = users[0].id;
+
     const newNote = {
+      important: true,
+      userId,
+    };
+
+    await api.post("/api/notes").send(newNote).expect(400);
+
+    const notesAtEnd = await helper.notesInDb();
+    expect(notesAtEnd).toHaveLength(helper.initialNotes.length);
+  });
+
+  test("fails with status code 400 if user id is invalid", async () => {
+    const newNote = {
+      content: "async/await simplifies making async calls",
       important: true,
     };
 
@@ -117,10 +144,8 @@ describe("deletion of a note", () => {
 describe("when there is initially one user in db", () => {
   beforeEach(async () => {
     await User.deleteMany({});
-
     const passwordHash = await bcrypt.hash("secret", 10);
     const user = new User({ username: "root", passwordHash });
-
     await user.save();
   });
 
