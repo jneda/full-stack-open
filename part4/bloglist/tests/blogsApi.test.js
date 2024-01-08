@@ -1,7 +1,9 @@
+const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const helper = require("./testHelper");
 
 const api = supertest(app);
@@ -187,6 +189,151 @@ describe("updating a note", () => {
     };
 
     await api.put(`${baseUrl}/${invalidId}`).send(update).expect(400);
+  });
+});
+
+describe("when there is initially one user in db", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+
+    const passwordHash = await bcrypt.hash("password", 10);
+    const user = new User({ username: "root", passwordHash });
+    await user.save();
+  });
+
+  test("get all users returns the correct users", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const response = await api
+      .get("/api/users")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body).toEqual(usersAtStart);
+  });
+
+  test("creation succeeds with a fresh username", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "jlsaka",
+      name: "Jean-Luc Sakamoto",
+      password: "sakamoto",
+    };
+
+    await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
+
+    const usernames = usersAtEnd.map((u) => u.username);
+    expect(usernames).toContain(newUser.username);
+  });
+
+  test("creation fails when username or password are omitted", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "jlsaka",
+      name: "Jean-Luc Sakamoto",
+      password: "sakamoto",
+    };
+
+    const noUsername = { ...newUser };
+    delete noUsername.username;
+
+    const noPassword = { ...newUser };
+    delete noPassword.password;
+
+    let response = await api
+      .post("/api/users")
+      .send(noUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.error).toBe(
+      "Invalid username or password: 3 characters minimum."
+    );
+
+    let usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+
+    response = await api
+      .post("/api/users")
+      .send(noPassword)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.error).toBe(
+      "Invalid username or password: 3 characters minimum."
+    );
+
+    usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("creation fails when username or password are too short", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "jlsaka",
+      name: "Jean-Luc Sakamoto",
+      password: "sakamoto",
+    };
+
+    const badUsername = { ...newUser, username: "ju" };
+
+    const badPassword = { ...newUser, password: "gg" };
+
+    let response = await api
+      .post("/api/users")
+      .send(badUsername)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.error).toBe(
+      "Invalid username or password: 3 characters minimum."
+    );
+
+    let usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+
+    response = await api
+      .post("/api/users")
+      .send(badPassword)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.error).toBe(
+      "Invalid username or password: 3 characters minimum."
+    );
+
+    usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
+
+  test("creation fails when username already exists", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "root",
+      password: "password123",
+    };
+
+    const response = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(409)
+      .expect("Content-Type", /application\/json/);
+
+    expect(response.body.error).toBe("Username already exists.");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
 });
 
