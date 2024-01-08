@@ -9,6 +9,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: error.message });
   } else if (error.name === "ValidationConflictError") {
     return response.status(409).json({ error: error.message });
+  } else if (error.name === "JsonWebTokenError") {
+    return response.status(401).json({ error: error.message });
   }
 
   if (error.message === "Resource not found.") {
@@ -18,4 +20,15 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
-module.exports = { errorHandler };
+const tokenExtractor = (request, response, next) => {
+  request.token = null;
+
+  const authorization = request.get("authorization");
+  if (authorization && authorization.startsWith("Bearer ")) {
+    request.token = authorization.replace("Bearer ", "");
+  }
+
+  next();
+};
+
+module.exports = { errorHandler, tokenExtractor };
