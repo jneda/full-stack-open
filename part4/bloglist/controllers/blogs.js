@@ -1,7 +1,5 @@
-const jwt = require("jsonwebtoken");
 const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
-const User = require("../models/user");
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { username: 1, name: 1 });
@@ -11,16 +9,7 @@ blogsRouter.get("/", async (request, response) => {
 blogsRouter.post("/", async (request, response) => {
   const body = request.body;
 
-  const decodedToken = await jwt.verify(request.token, process.env.SECRET);
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: "Invalid token." });
-  }
-
-  const user = await User.findById(decodedToken.id);
-
-  if (!user) {
-    throw new Error("Failed to fetch user.");
-  }
+  const user = request.user;
 
   const newBlog = {
     title: body.title,
@@ -57,17 +46,7 @@ blogsRouter.put("/:id", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
-  const decodedToken = jwt.verify(request.token, process.env.SECRET);
-
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: "Invalid token." });
-  }
-
-  const user = await User.findById(decodedToken.id);
-
-  if (!user) {
-    throw new Error("Failed to fetch user.");
-  }
+  const user = request.user;
 
   const blogToDelete = await Blog.findById(request.params.id);
 
