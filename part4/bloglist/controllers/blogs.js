@@ -33,6 +33,18 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.put("/:id", async (request, response) => {
+  const user = request.user;
+
+  const blogToUpdate = await Blog.findById(request.params.id);
+
+  if (!blogToUpdate) {
+    throw new Error("Resource not found.");
+  }
+
+  if (user.id !== blogToUpdate.user.toString()) {
+    return response.status(403).json({ error: "You are forbidden." });
+  }
+
   const update = request.body;
 
   const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, update, {
@@ -58,7 +70,7 @@ blogsRouter.delete("/:id", async (request, response) => {
   }
 
   if (user.id !== blogToDelete.user.toString()) {
-    return response.status(403).json({ error: "You are not authorized." });
+    return response.status(403).json({ error: "You are forbidden." });
   }
 
   await Blog.findByIdAndDelete(request.params.id);
