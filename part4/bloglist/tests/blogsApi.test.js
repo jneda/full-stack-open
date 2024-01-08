@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
@@ -37,6 +38,25 @@ describe("unique identifier property of a blog", () => {
 });
 
 describe("create a blog", () => {
+  let user;
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    user = new User({ username: "root", passwordHash });
+    await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
+  });
+
   test("it should create a new blog on sending a POST request", async () => {
     const newBlog = {
       title: "Fish are okay",
@@ -47,6 +67,7 @@ describe("create a blog", () => {
 
     await api
       .post(baseUrl)
+      .set("Authorization", `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -60,11 +81,35 @@ describe("create a blog", () => {
       return b;
     });
 
-    expect(contents).toContainEqual(newBlog);
+    const newBlogWithUser = {
+      ...newBlog,
+      user: user._id,
+    };
+
+    expect(contents).toContainEqual(newBlogWithUser);
   });
 });
 
 describe("on sending a new blog without the likes property", () => {
+  let user;
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    user = new User({ username: "root", passwordHash });
+    await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
+  });
+
   test("it should create the blog and give the likes property a default value of 0", async () => {
     const newBlog = {
       title: "Fish are okay",
@@ -74,6 +119,7 @@ describe("on sending a new blog without the likes property", () => {
 
     const response = await api
       .post(baseUrl)
+      .set("Authorization", `Bearer ${token}`)
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -85,13 +131,36 @@ describe("on sending a new blog without the likes property", () => {
 });
 
 describe("on sending incomplete data when creating a blog", () => {
+  let user;
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    user = new User({ username: "root", passwordHash });
+    await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
+  });
+
   test("it should respond with status code 400 when title is missing", async () => {
     const newBlog = {
       author: "Madeleine Sévère",
       url: "https://www.gloubgloub.tv",
     };
 
-    await api.post(baseUrl).send(newBlog).expect(400);
+    await api
+      .post(baseUrl)
+      .set("Authorization", `Bearer ${token}`)
+      .send(newBlog)
+      .expect(400);
 
     const notesAtEnd = await helper.blogsInDb();
     expect(notesAtEnd.length).toBe(helper.initialBlogs.length);
@@ -103,20 +172,49 @@ describe("on sending incomplete data when creating a blog", () => {
       author: "Madeleine Sévère",
     };
 
-    await api.post(baseUrl).send(newBlog).expect(400);
+    await api
+      .post(baseUrl)
+      .set("Authorization", `Bearer ${token}`)
+      .send(newBlog)
+      .expect(400);
 
     const notesAtEnd = await helper.blogsInDb();
     expect(notesAtEnd.length).toBe(helper.initialBlogs.length);
   });
 });
 
-describe("deleting a note", () => {
+describe("deleting a blog", () => {
+  let user;
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    user = new User({ username: "root", passwordHash });
+    await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
+  });
+
   test("should succeed with status code 204 when providing a valid id", async () => {
     const blogsAtStart = await helper.blogsInDb();
 
     const blogToDelete = blogsAtStart[0];
+    await Blog.findByIdAndUpdate(blogToDelete.id, {
+      user: user._id,
+    });
 
-    await api.delete(`${baseUrl}/${blogToDelete.id}`).expect(204);
+    await api
+      .delete(`${baseUrl}/${blogToDelete.id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(204);
 
     const blogsAtEnd = await helper.blogsInDb();
 
@@ -125,24 +223,53 @@ describe("deleting a note", () => {
     expect(blogsAtEnd).not.toContainEqual(blogToDelete);
   });
 
-  test("should fail with status code 404 if note does not exist", async () => {
+  test("should fail with status code 404 if blog does not exist", async () => {
     const validNonExistingId = await helper.nonExistingId();
 
-    await api.delete(`/api/blogs/${validNonExistingId}`).expect(404);
+    await api
+      .delete(`/api/blogs/${validNonExistingId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(404);
   });
 
   test("should fail with status code 400 if id is invalid", async () => {
     const invalidId = "thisisnotavalidid";
 
-    await api.delete(`/api/blogs/${invalidId}`).expect(400);
+    await api
+      .delete(`/api/blogs/${invalidId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
   });
 });
 
-describe("updating a note", () => {
+describe("updating a blog", () => {
+  let user;
+  let token;
+
+  beforeEach(async () => {
+    await User.deleteMany({});
+    const passwordHash = await bcrypt.hash("secret", 10);
+    user = new User({ username: "root", passwordHash });
+    await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
+  });
+
   test("should succeed when providing valid id and update data", async () => {
     const blogsAtStart = await helper.blogsInDb();
 
     const blogToUpdate = blogsAtStart[0];
+    await Blog.findByIdAndUpdate(blogToUpdate.id, {
+      user: user._id,
+    });
+
     const update = {
       ...blogToUpdate,
       likes: 42,
@@ -150,6 +277,7 @@ describe("updating a note", () => {
 
     const response = await api
       .put(`${baseUrl}/${blogToUpdate.id}`)
+      .set("Authorization", `Bearer ${token}`)
       .send(update)
       .expect(200)
       .expect("Content-Type", /application\/json/);
@@ -160,7 +288,12 @@ describe("updating a note", () => {
 
     const blogsAtEnd = await helper.blogsInDb();
 
-    expect(blogsAtEnd).toContainEqual(update);
+    const updateWithUser = {
+      ...update,
+      user: user._id,
+    };
+
+    expect(blogsAtEnd).toContainEqual(updateWithUser);
   });
 
   test("should fail with status code 404 when providing a valid but non existing id", async () => {
@@ -174,7 +307,11 @@ describe("updating a note", () => {
       likes: 42,
     };
 
-    await api.put(`${baseUrl}/${nonExistingId}`).send(update).expect(404);
+    await api
+      .put(`${baseUrl}/${nonExistingId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(update)
+      .expect(404);
   });
 
   test("should fail with status code 400 when providing an invalid id", async () => {
@@ -188,7 +325,11 @@ describe("updating a note", () => {
       likes: 42,
     };
 
-    await api.put(`${baseUrl}/${invalidId}`).send(update).expect(400);
+    await api
+      .put(`${baseUrl}/${invalidId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(update)
+      .expect(400);
   });
 });
 
