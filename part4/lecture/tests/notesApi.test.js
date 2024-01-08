@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const supertest = require("supertest");
 const app = require("../app");
@@ -65,11 +66,22 @@ describe("viewing a specific note", () => {
 });
 
 describe("addition of a new note", () => {
+  let token;
+
   beforeEach(async () => {
     await User.deleteMany({});
     const passwordHash = await bcrypt.hash("secret", 10);
     const user = new User({ username: "root", passwordHash });
     await user.save();
+
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    };
+
+    token = jwt.sign(userForToken, process.env.SECRET, {
+      expiresIn: 60 * 60,
+    });
   });
 
   test("succeeds with valid data", async () => {
@@ -85,6 +97,7 @@ describe("addition of a new note", () => {
     await api
       .post("/api/notes")
       .send(newNote)
+      .set("Authorization", `Bearer ${token}`)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -104,7 +117,11 @@ describe("addition of a new note", () => {
       userId,
     };
 
-    await api.post("/api/notes").send(newNote).expect(400);
+    await api
+      .post("/api/notes")
+      .send(newNote)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
 
     const notesAtEnd = await helper.notesInDb();
     expect(notesAtEnd).toHaveLength(helper.initialNotes.length);
@@ -116,7 +133,11 @@ describe("addition of a new note", () => {
       important: true,
     };
 
-    await api.post("/api/notes").send(newNote).expect(400);
+    await api
+      .post("/api/notes")
+      .send(newNote)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
 
     const notesAtEnd = await helper.notesInDb();
     expect(notesAtEnd).toHaveLength(helper.initialNotes.length);
