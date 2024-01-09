@@ -401,48 +401,48 @@ describe("updating a blog", () => {
     expect(blogsAtEnd).toContainEqual(blogWithUser);
   });
 
-  test("should fail with status code 403 when the user is not the owner", async () => {
-    const blogsAtStart = await helper.blogsInDb();
+  // test("should fail with status code 403 when the user is not the owner", async () => {
+  //   const blogsAtStart = await helper.blogsInDb();
 
-    const blogToUpdate = blogsAtStart[0];
-    await Blog.findByIdAndUpdate(blogToUpdate.id, {
-      user: user._id,
-    });
+  //   const blogToUpdate = blogsAtStart[0];
+  //   await Blog.findByIdAndUpdate(blogToUpdate.id, {
+  //     user: user._id,
+  //   });
 
-    const update = {
-      ...blogToUpdate,
-      likes: 42,
-    };
+  //   const update = {
+  //     ...blogToUpdate,
+  //     likes: 42,
+  //   };
 
-    const passwordHash = await bcrypt.hash("badsecret", 10);
+  //   const passwordHash = await bcrypt.hash("badsecret", 10);
 
-    const otherUser = new User({ username: "bad", passwordHash });
-    await otherUser.save();
+  //   const otherUser = new User({ username: "bad", passwordHash });
+  //   await otherUser.save();
 
-    const otherUserForToken = {
-      username: otherUser.username,
-      id: otherUser._id,
-    };
+  //   const otherUserForToken = {
+  //     username: otherUser.username,
+  //     id: otherUser._id,
+  //   };
 
-    const otherToken = jwt.sign(otherUserForToken, process.env.SECRET, {
-      expiresIn: 60 * 60,
-    });
+  //   const otherToken = jwt.sign(otherUserForToken, process.env.SECRET, {
+  //     expiresIn: 60 * 60,
+  //   });
 
-    await api
-      .put(`${baseUrl}/${blogToUpdate.id}`)
-      .set("Authorization", `Bearer ${otherToken}`)
-      .send(update)
-      .expect(403);
+  //   await api
+  //     .put(`${baseUrl}/${blogToUpdate.id}`)
+  //     .set("Authorization", `Bearer ${otherToken}`)
+  //     .send(update)
+  //     .expect(403);
 
-    const blogsAtEnd = await helper.blogsInDb();
+  //   const blogsAtEnd = await helper.blogsInDb();
 
-    const blogWithUser = {
-      ...blogToUpdate,
-      user: user._id,
-    };
+  //   const blogWithUser = {
+  //     ...blogToUpdate,
+  //     user: user._id,
+  //   };
 
-    expect(blogsAtEnd).toContainEqual(blogWithUser);
-  });
+  //   expect(blogsAtEnd).toContainEqual(blogWithUser);
+  // });
 
   test("should fail with status code 404 when providing a valid but non existing id", async () => {
     const nonExistingId = await helper.nonExistingId();

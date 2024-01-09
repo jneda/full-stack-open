@@ -42,9 +42,9 @@ blogsRouter.put("/:id", async (request, response) => {
     throw new Error("Resource not found.");
   }
 
-  if (user.id !== blogToUpdate.user.toString()) {
-    return response.status(403).json({ error: "You are forbidden." });
-  }
+  // if (user.id !== blogToUpdate.user.toString()) {
+  //   return response.status(403).json({ error: "You are forbidden." });
+  // }
 
   const update = request.body;
 
@@ -58,6 +58,7 @@ blogsRouter.put("/:id", async (request, response) => {
     throw new Error("Resource not found.");
   }
 
+  await updatedBlog.populate("user", { username: 1, name: 1 });
   response.json(updatedBlog);
 });
 
