@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog, onLike }) => {
+const Blog = ({ blog, onLike, user, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const detailsVisibile = { display: showDetails ? "" : "none" };
@@ -13,6 +13,9 @@ const Blog = ({ blog, onLike }) => {
         {blog.title}
         <span className="author"> - {blog.author}</span>
         <button onClick={toggleDetails}>{showDetails ? "Hide" : "View"}</button>
+        {user && user.id === blog.user.id ? (
+          <button onClick={() => onDelete(blog)}>Delete</button>
+        ) : null}
       </div>
       <div className="blogDetails" style={detailsVisibile}>
         <span>{blog.url}</span>

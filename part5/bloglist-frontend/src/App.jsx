@@ -25,7 +25,7 @@ const App = () => {
     };
 
     fetchBlogs();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem("loggedBlogappUser");
@@ -113,6 +113,29 @@ const App = () => {
     }
   };
 
+  const handleDeleteBlog = async (blog) => {
+    try {
+      const confirmed = window.confirm(
+        `Delete ${blog.title} by ${blog.author}?`
+      );
+      if (!confirmed) return;
+
+      await blogService.destroy(blog.id);
+      const newBlogs = blogs.filter((b) => b.id !== blog.id);
+      setBlogs(newBlogs);
+
+      showNotification(
+        `${blog.title} by ${blog.author} has been deleted.`,
+        "success"
+      );
+    } catch (exception) {
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+      showNotification(errorMessage, "error");
+    }
+  };
+
   return (
     <>
       <Notifications
@@ -132,7 +155,12 @@ const App = () => {
             <BlogForm createBlog={handleCreateBlog} />
           </Togglable>
           <h2>Blogs</h2>
-          <Blogs blogs={blogs} onLike={handleUpdateLikes} />
+          <Blogs
+            blogs={blogs}
+            onLike={handleUpdateLikes}
+            user={user}
+            onDelete={handleDeleteBlog}
+          />
         </>
       )}
     </>

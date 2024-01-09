@@ -22,13 +22,13 @@ const create = async (newBlog) => {
 };
 
 const update = async (blogId, update) => {
-  console.log(blogId, update, configure());
-  const response = await axios.put(
-    `${baseUrl}/${blogId}`,
-    update,
-    configure()
-  );
+  const response = await axios.put(`${baseUrl}/${blogId}`, update, configure());
   return response.data;
 };
 
-export default { getAll, create, update, setToken };
+const destroy = async (blogId) => {
+  const response = await axios.delete(`${baseUrl}/${blogId}`, configure());
+  return response.data;
+};
+
+export default { getAll, create, update, destroy, setToken };
