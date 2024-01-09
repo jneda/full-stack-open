@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Blog from "./Blog";
 
 const Blogs = ({ blogs, onLike, user, onDelete }) => {
@@ -16,6 +17,13 @@ const Blogs = ({ blogs, onLike, user, onDelete }) => {
       ))}
     </div>
   );
+};
+
+Blogs.propTypes = {
+  blogs: PropTypes.arrayOf(PropTypes.object),
+  onLike: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default Blogs;

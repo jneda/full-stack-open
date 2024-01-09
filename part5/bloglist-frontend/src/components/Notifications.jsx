@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import Notification from "./Notification";
 
 const Notifications = ({ errorMessage, successMessage }) => {
@@ -9,6 +10,11 @@ const Notifications = ({ errorMessage, successMessage }) => {
   ) : errorMessage ? (
     <Notification message={errorMessage} type={ERROR} />
   ) : null;
+};
+
+Notifications.propTypes = {
+  errorMessage: PropTypes.string,
+  successMessage: PropTypes.string,
 };
 
 export default Notifications;
