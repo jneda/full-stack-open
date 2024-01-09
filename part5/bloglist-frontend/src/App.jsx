@@ -10,7 +10,7 @@ import blogService from "./services/blogs";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  
+
   const [user, setUser] = useState(null);
 
   const [errorMessage, setErrorMessage] = useState(null);
@@ -36,6 +36,12 @@ const App = () => {
     }
   }, []);
 
+  const showNotification = (message, type) => {
+    const setMessage = type === "success" ? setSuccessMessage : setErrorMessage;
+    setMessage(message);
+    setTimeout(() => setMessage(null), 5000);
+  };
+
   const handleLogin = async (credentials) => {
     try {
       const user = await loginService.login(credentials);
@@ -45,7 +51,9 @@ const App = () => {
       blogService.setToken(user.token);
       showNotification(`${user.name} logged in.`, "success");
     } catch (exception) {
-      const errorMessage = exception.response.data.error;
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
       showNotification(errorMessage, "error");
     }
   };
@@ -71,15 +79,38 @@ const App = () => {
         "success"
       );
     } catch (exception) {
-      const errorMessage = exception.response.data.error;
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
       showNotification(errorMessage, "error");
     }
   };
 
-  const showNotification = (message, type) => {
-    const setMessage = type === "success" ? setSuccessMessage : setErrorMessage;
-    setMessage(message);
-    setTimeout(() => setMessage(null), 3000);
+  const handleUpdateLikes = async (blog) => {
+    try {
+      const update = {
+        ...blog,
+        user: blog.user.id,
+        likes: blog.likes + 1,
+      };
+      delete update.id;
+
+      const updatedBlog = await blogService.update(blog.id, update);
+      const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
+      setBlogs(newBlogs);
+
+      showNotification(
+        `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
+          updatedBlog.likes !== 1 ? "s" : ""
+        }.`,
+        "success"
+      );
+    } catch (exception) {
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+      showNotification(errorMessage, "error");
+    }
   };
 
   return (
@@ -101,7 +132,7 @@ const App = () => {
             <BlogForm createBlog={handleCreateBlog} />
           </Togglable>
           <h2>Blogs</h2>
-          <Blogs blogs={blogs} />
+          <Blogs blogs={blogs} onLike={handleUpdateLikes} />
         </>
       )}
     </>
