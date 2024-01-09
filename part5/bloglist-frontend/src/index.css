@@ -70,3 +70,7 @@ form button {
 .success {
   color: #4d4;
 }
+
+.togglable {
+  margin: 0.6rem 0;
+}
