@@ -23,6 +23,7 @@ input {
 button {
   background: #eee;
   color: #222;
+  cursor: pointer;
 }
 
 form > * {
@@ -46,7 +47,32 @@ form button {
 }
 
 .blog {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #333;
+  border-radius: 2px;
+}
+
+.blog + .blog {
+  margin-top: 0.6rem;
+}
+
+.blogEntry {
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.blogEntry span {
+  display: inline-block;
+  margin-inline: 0.4rem;
+}
+
+.blogDetails > * {
   margin: 0.6rem 0;
+}
+
+.like button {
+  margin-inline-start: 0.4em;
 }
 
 .author {
