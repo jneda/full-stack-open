@@ -34,9 +34,9 @@ notesRouter.post("/", async (request, response) => {
     return response.status(401).json({ error: "Invalid token." });
   }
 
-  if (decodedToken.id !== body.userId) {
-    return response.status(400).json({ error: "Malformated user id." });
-  }
+  // if (decodedToken.id !== body.userId) {
+  //   return response.status(400).json({ error: "Malformated user id." });
+  // }
 
   const user = await User.findById(decodedToken.id);
 
