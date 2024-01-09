@@ -7,7 +7,6 @@ const LoginForm = ({
 }) => {
   return (
     <>
-      <h2>Log in</h2>
       <form onSubmit={onLogin}>
         <div>
           Username:{" "}

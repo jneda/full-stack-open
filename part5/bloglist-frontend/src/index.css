@@ -1,0 +1,69 @@
+body {
+  background: #222;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+}
+
+input,
+button {
+  font-family: inherit;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+input {
+  background: inherit;
+  color: inherit;
+}
+
+button {
+  background: #eee;
+  color: #222;
+}
+
+form > * {
+  margin: 0.6rem 0;
+}
+
+form div {
+  width: 16rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+form button {
+  display: block;
+}
+
+.loggedIn {
+  display: inline-block;
+  margin-inline-end: 0.4rem;
+}
+
+.blog {
+  margin: 0.6rem 0;
+}
+
+.author {
+  font-style: italic;
+  color: #bbb;
+}
+
+.notification {
+  background: #333;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-block-end: 0.6rem;
+}
+
+.error {
+  color: #d44;
+}
+
+.success {
+  color: #4d4;
+}

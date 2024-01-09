@@ -1,7 +1,7 @@
 const Logout = ({ user, onLogout }) => {
   return (
     <>
-      <span>{user.name} logged in</span>
+      <span className="loggedIn">{user.name} logged in</span>
       <button onClick={onLogout}>Log out</button>
     </>
   );

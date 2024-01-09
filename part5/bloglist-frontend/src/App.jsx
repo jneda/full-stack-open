@@ -3,6 +3,7 @@ import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
 import BlogForm from "./components/BlogForm";
 import Blogs from "./components/Blogs";
+import Notifications from "./components/Notifications";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 
@@ -18,6 +19,7 @@ const App = () => {
   const [url, setUrl] = useState("");
 
   const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -49,16 +51,19 @@ const App = () => {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUser(user);
       blogService.setToken(user.token);
+      showNotification(`${user.name} logged in.`, "success");
     } catch (exception) {
       const errorMessage = exception.response.data.error;
-      setErrorMessage(errorMessage);
+      showNotification(errorMessage, "error");
     }
   };
 
   const handleLogout = () => {
+    const userName = user.name;
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
     blogService.setToken(null);
+    showNotification(`${userName} logged out.`, "success");
   };
 
   const handleTitleChange = ({ target }) => setTitle(target.value);
@@ -72,26 +77,43 @@ const App = () => {
       const createdBlog = await blogService.create({ title, author, url });
       const newBlogs = blogs.concat(createdBlog);
       setBlogs(newBlogs);
+      showNotification(
+        `${createdBlog.title} by ${createdBlog.author} added.`,
+        "success"
+      );
     } catch (exception) {
-      console.log(exception);
       const errorMessage = exception.response.data.error;
-      setErrorMessage(errorMessage);
+      showNotification(errorMessage, "error");
     }
+  };
+
+  const showNotification = (message, type) => {
+    const setMessage = type === "success" ? setSuccessMessage : setErrorMessage;
+    setMessage(message);
+    setTimeout(() => setMessage(null), 3000);
   };
 
   return (
     <>
+      <Notifications
+        successMessage={successMessage}
+        errorMessage={errorMessage}
+      />
       {user === null ? (
-        <LoginForm
-          username={username}
-          onUsernameChange={handleUsernameChange}
-          password={password}
-          onPasswordChange={handlePasswordChange}
-          onLogin={handleLogin}
-        />
+        <>
+          <h2>Log in</h2>
+          <LoginForm
+            username={username}
+            onUsernameChange={handleUsernameChange}
+            password={password}
+            onPasswordChange={handlePasswordChange}
+            onLogin={handleLogin}
+          />
+        </>
       ) : (
         <>
           <Logout user={user} onLogout={handleLogout} />
+          <h2>Add new blog</h2>
           <BlogForm
             title={title}
             onTitleChange={handleTitleChange}
@@ -101,6 +123,7 @@ const App = () => {
             onUrlChange={handleUrlChange}
             createBlog={handleCreateBlog}
           />
+          <h2>Blogs</h2>
           <Blogs blogs={blogs} />
         </>
       )}
