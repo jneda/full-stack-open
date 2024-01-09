@@ -3,6 +3,8 @@ body {
   color: #eee;
   font-family: Arial, sans-serif;
   box-sizing: border-box;
+  margin: 0;
+  padding: 2rem;
 }
 
 input,
@@ -31,6 +33,7 @@ form div {
   width: 16rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 form button {
