@@ -17,6 +17,7 @@ const NoteForm = ({ createNote }) => {
     <div className="formDiv">
       <form onSubmit={addNote}>
         <input
+          id="new-note"
           value={newNote}
           onChange={({ target }) => setNewNote(target.value)}
           placeholder="Write note content here"
