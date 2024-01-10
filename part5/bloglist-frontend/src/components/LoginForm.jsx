@@ -15,7 +15,7 @@ const LoginForm = ({ onLogin }) => {
 
   return (
     <>
-      <form onSubmit={login}>
+      <form onSubmit={login} data-cy="login-form">
         <div>
           Username:{" "}
           <input
@@ -23,6 +23,7 @@ const LoginForm = ({ onLogin }) => {
             name="username"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
+            data-cy="username-input"
           />
         </div>
         <div>
@@ -32,9 +33,12 @@ const LoginForm = ({ onLogin }) => {
             name="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
+            data-cy="password-input"
           />
         </div>
-        <button type="submit">Log in</button>
+        <button type="submit" data-cy="login-submit">
+          Log in
+        </button>
       </form>
     </>
   );

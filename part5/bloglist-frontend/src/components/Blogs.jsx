@@ -5,7 +5,7 @@ const Blogs = ({ blogs, onLike, user, onDelete }) => {
   const descendingLikesSort = (blogA, blogB) => blogB.likes - blogA.likes;
 
   return (
-    <div>
+    <div data-cy="blogs-list">
       {blogs.sort(descendingLikesSort).map((blog) => (
         <Blog
           key={blog.id}

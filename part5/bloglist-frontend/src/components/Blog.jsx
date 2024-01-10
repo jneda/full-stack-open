@@ -9,22 +9,26 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
   const toggleDetails = () => setShowDetails(!showDetails);
 
   return (
-    <div className="blog">
+    <div className="blog" data-cy="blog-item">
       <div className="blogEntry">
         {blog.title}
         <span className="author"> - {blog.author}</span>
-        <button onClick={toggleDetails}>{showDetails ? "Hide" : "View"}</button>
-        {user && user.id === blog.user.id ? (
+        <button onClick={toggleDetails} data-cy="blog-details-toggle-btn">
+          {showDetails ? "Hide" : "View"}
+        </button>
+        {user && user.id === blog.user?.id ? (
           <button onClick={() => onDelete(blog)}>Delete</button>
         ) : null}
       </div>
       <div className="blogDetails" style={detailsVisibile}>
         <span>{blog.url}</span>
         <div className="like">
-          <span>Likes: {blog.likes}</span>
-          <button onClick={() => onLike(blog)}>Like</button>
+          <span data-cy="blog-likes">Likes: {blog.likes}</span>
+          <button onClick={() => onLike(blog)} data-cy="blog-like-btn">
+            Like
+          </button>
         </div>
-        <span>{blog.user.name}</span>
+        <span>{blog.user?.name}</span>
       </div>
     </div>
   );
