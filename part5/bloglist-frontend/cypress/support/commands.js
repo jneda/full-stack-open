@@ -4,7 +4,7 @@
 // ***********************************************
 
 Cypress.Commands.add("login", ({ username, password }) => {
-  cy.request("POST", "http://localhost:3003/api/login", {
+  cy.request("POST", `${Cypress.env("BACKEND")}/login`, {
     username,
     password,
   }).then(({ body }) => {
@@ -17,8 +17,12 @@ Cypress.Commands.add("createBlog", ({ title, author, url }) => {
   console.log(token);
   cy.request({
     method: "POST",
-    url: "http://localhost:3003/api/blogs",
+    url: `${Cypress.env("BACKEND")}/blogs`,
     body: { title, author, url },
     headers: { Authorization: `Bearer ${token}` },
   });
+});
+
+Cypress.Commands.add("createUser", ({ username, name, password }) => {
+  cy.request("POST", `${Cypress.env("BACKEND")}/users`, { username, name, password });
 });

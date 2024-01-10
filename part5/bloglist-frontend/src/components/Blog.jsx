@@ -17,7 +17,9 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
           {showDetails ? "Hide" : "View"}
         </button>
         {user && user.id === blog.user?.id ? (
-          <button onClick={() => onDelete(blog)}>Delete</button>
+          <button onClick={() => onDelete(blog)} data-cy="delete-blog-btn">
+            Delete
+          </button>
         ) : null}
       </div>
       <div className="blogDetails" style={detailsVisibile}>

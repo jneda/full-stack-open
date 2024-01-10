@@ -1,6 +1,6 @@
 describe("Blog app", function () {
   beforeEach(function () {
-    cy.request("POST", "http://localhost:3003/api/testing/reset");
+    cy.request("POST", `${Cypress.env("BACKEND")}/testing/reset`);
 
     const user = {
       username: "serj",
@@ -8,17 +8,17 @@ describe("Blog app", function () {
       password: "123",
     };
 
-    cy.request("POST", "http://localhost:3003/api/users", user);
-
-    cy.visit("http://localhost:5173");
+    cy.createUser(user);
   });
 
   it("Login form is shown", function () {
+    cy.visit("/");
     cy.get("[data-cy='login-form']");
   });
 
   describe("Login", function () {
     it("Succeeds with correct credentials", function () {
+      cy.visit("/");
       cy.get("[data-cy='username-input']").type("serj");
       cy.get("[data-cy='password-input']").type("123");
       cy.get("[data-cy='login-submit']").click();
@@ -27,6 +27,7 @@ describe("Blog app", function () {
     });
 
     it("Fails with wrong credentials", function () {
+      cy.visit("/");
       cy.get("[data-cy='username-input']").type("serj");
       cy.get("[data-cy='password-input']").type("456");
       cy.get("[data-cy='login-submit']").click();
@@ -43,7 +44,7 @@ describe("Blog app", function () {
     });
 
     it("A blog can be created", function () {
-      cy.visit("http://localhost:5173");
+      cy.visit("/");
       cy.get("[data-cy='show-togglable-btn']").click();
 
       cy.get("[data-cy='title-input']").type("Doggoes doggoes");
@@ -56,18 +57,47 @@ describe("Blog app", function () {
         .should("contain", "Doggoes doggoes - Jean-Luc Sakamoto");
     });
 
-    it.only("A blog can be liked", function () {
-      cy.createBlog({
-        title: "Doggoes doggoes",
-        author: "Jean-Luc Sakamoto",
-        url: "http://woofwoof.org",
+    describe("And a blog exists", function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: "Doggoes doggoes",
+          author: "Jean-Luc Sakamoto",
+          url: "http://woofwoof.org",
+        });
       });
-      cy.visit("http://localhost:5173");
 
-      cy.get("[data-cy='blog-details-toggle-btn']").click();
-      cy.get("[data-cy='blog-like-btn']").click();
+      it("A blog can be liked", function () {
+        cy.visit("/");
+        cy.get("[data-cy='blog-details-toggle-btn']").click();
+        cy.get("[data-cy='blog-like-btn']").click();
 
-      cy.get("[data-cy='blog-likes']").should("contain", "Likes: 1");
+        cy.get("[data-cy='blog-likes']").should("contain", "Likes: 1");
+      });
+
+      it("A blog can be deleted by its user", function () {
+        cy.visit("/");
+        cy.get("[data-cy='delete-blog-btn']").click();
+
+        cy.get("[data-cy='blog-item']").should("have.length", 0);
+        cy.get("html").should("not.contain", "[data-cy='blog-item']");
+      });
+
+      it("Only the user that added a blog can see the Delete button", function () {
+        const user = {
+          username: "jlsaka",
+          name: "Jean-Luc Sakamoto",
+          password: "456",
+        };
+
+        cy.createUser(user);
+        cy.login({ username: user.username, password: user.password });
+
+        cy.visit("/");
+        cy.get("[data-cy='blog-item']").should(
+          "not.contain",
+          "[data-cy='delete-blog-btn']"
+        );
+      });
     });
   });
 });
