@@ -29,15 +29,19 @@ Anecdote.propTypes = {
 
 const AnecdoteList = () => {
   const anecdotes = useSelector(({ anecdotes, filter }) => {
+    if (filter === "") {
+      return anecdotes;
+    }
     return anecdotes.filter((a) =>
       a.content.toLowerCase().includes(filter.toLowerCase())
     );
   });
+
   const dispatch = useDispatch();
 
-  const vote = (id, content) => {
-    dispatch(incrementVotes(id));
-    dispatch(setNotification(`You voted "${content}".`));
+  const vote = (anecdote) => {
+    dispatch(incrementVotes(anecdote));
+    dispatch(setNotification(`You voted "${anecdote.content}".`));
     setTimeout(() => dispatch(removeNotification()), 5000);
   };
 
@@ -45,13 +49,16 @@ const AnecdoteList = () => {
 
   return (
     <>
-      {anecdotes.sort(sortFunction).map((anecdote) => (
-        <Anecdote
-          key={anecdote.id}
-          anecdote={anecdote}
-          handleClick={() => vote(anecdote.id, anecdote.content)}
-        />
-      ))}
+      {anecdotes
+        .slice()
+        .sort(sortFunction)
+        .map((anecdote) => (
+          <Anecdote
+            key={anecdote.id}
+            anecdote={anecdote}
+            handleClick={() => vote(anecdote)}
+          />
+        ))}
     </>
   );
 };
