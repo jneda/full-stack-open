@@ -1,0 +1,15 @@
+body {
+  margin: 0;
+  background: #191919;
+  color: #bed754;
+  font-family: monospace;
+  font-size: 1rem;
+}
+
+strong {
+  font-weight: bolder;
+}
+
+#root {
+  padding: 4rem;
+}
