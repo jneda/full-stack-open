@@ -38,3 +38,14 @@ button {
   color: #191919;
   border-radius: 0 4px 4px 0;
 }
+
+input[type="radio"]:checked {
+  accent-color: #e3651d;
+}
+
+#filter-selector {
+  display: flex;
+  gap: 0.4rem;
+  margin-block-start: 0.4rem;
+  font-style: italic;
+}

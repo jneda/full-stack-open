@@ -1,3 +1,16 @@
+const initialState = [
+  {
+    content: "Reducer defines how Redux store works",
+    important: true,
+    id: 1,
+  },
+  {
+    content: "State of store can contain any data",
+    important: false,
+    id: 2,
+  },
+];
+
 const generateId = () => Number((Math.random() * 1000 * 1000).toFixed(0));
 
 export const createNote = (content) => ({
@@ -14,7 +27,7 @@ export const toggleImportanceOf = (id) => ({
   payload: { id },
 });
 
-const noteReducer = (state = [], action) => {
+const noteReducer = (state = initialState, action) => {
   switch (action.type) {
     case "NEW_NOTE":
       return [...state, action.payload];
