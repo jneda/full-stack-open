@@ -1,3 +1,19 @@
+const generateId = () => Number((Math.random() * 1000 * 1000).toFixed(0));
+
+export const createNote = (content) => ({
+  type: "NEW_NOTE",
+  payload: {
+    content,
+    important: false,
+    id: generateId(),
+  },
+});
+
+export const toggleImportanceOf = (id) => ({
+  type: "TOGGLE_IMPORTANCE",
+  payload: { id },
+});
+
 const noteReducer = (state = [], action) => {
   switch (action.type) {
     case "NEW_NOTE":

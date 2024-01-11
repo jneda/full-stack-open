@@ -1,5 +1,8 @@
 import ReactDOM from "react-dom/client";
 import { legacy_createStore as createStore } from "redux";
+import { Provider } from "react-redux";
+
+import App from "./App";
 import noteReducer from "./reducers/noteReducer";
 import "./index.css";
 
@@ -23,21 +26,10 @@ store.dispatch({
   },
 });
 
-const App = () => (
-  <div>
-    <ul>
-      {store.getState().map((n) => (
-        <li key={n.id}>
-          {n.content} <strong>{n.important ? "important" : ""}</strong>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 
-const renderApp = () => root.render(<App />);
-
-renderApp();
-store.subscribe(renderApp);
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
