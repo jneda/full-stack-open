@@ -99,5 +99,58 @@ describe("Blog app", function () {
         );
       });
     });
+
+    describe.only("And several blogs exist", function () {
+      beforeEach(function () {
+        cy.createBlog({
+          title: "Doggoes doggoes",
+          author: "Jean-Luc Sakamoto",
+          url: "http://woofwoof.org",
+        });
+        cy.createBlog({
+          title: "Sneaky mice",
+          author: "Romarine Smith",
+          url: "ninjamice.ru",
+        });
+
+        cy.visit("/");
+
+        cy.get("[data-cy='blog-item']")
+          .find("[data-cy='blog-details-toggle-btn']")
+          .each((btn) => btn.click());
+      });
+
+      it("Blogs are ordered in descending likes order", function () {
+        cy.get("[data-cy='blog-item']")
+          .eq(1)
+          .find("[data-cy='blog-like-btn']")
+          .click();
+
+        cy.get("[data-cy='blog-item']")
+          .eq(0)
+          .should("contain", "Sneaky mice")
+          .and("contain", "Likes: 1");
+
+        cy.get("[data-cy='blog-item']")
+          .eq(1)
+          .find("[data-cy='blog-like-btn']")
+          .click();
+
+        cy.get("[data-cy='blog-item']")
+          .eq(1)
+          .should("contain", "Doggoes doggoes")
+          .and("contain", "Likes: 1");
+
+        cy.get("[data-cy='blog-item']")
+          .eq(1)
+          .find("[data-cy='blog-like-btn']")
+          .click();
+
+        cy.get("[data-cy='blog-item']")
+          .eq(0)
+          .should("contain", "Doggoes doggoes")
+          .and("contain", "Likes: 2");
+      });
+    });
   });
 });
