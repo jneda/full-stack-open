@@ -12,8 +12,6 @@ const store = configureStore({
   reducer: { notes: noteReducer, filter: filterReducer },
 });
 
-console.log(store.getState());
-
 const root = ReactDOM.createRoot(document.querySelector("#root"));
 
 root.render(
