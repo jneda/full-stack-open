@@ -1,19 +1,24 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const NewAnecdote = (props) => {
+const NewAnecdote = ({ addNew, onAdd }) => {
   const [content, setContent] = useState("");
   const [author, setAuthor] = useState("");
   const [info, setInfo] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    props.addNew({
+    addNew({
       content,
       author,
       info,
       votes: 0,
     });
+    onAdd(`New anecdote "${content}" created.`);
+    navigate("/");
   };
 
   return (
@@ -52,6 +57,7 @@ const NewAnecdote = (props) => {
 
 NewAnecdote.propTypes = {
   addNew: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
 };
 
 export default NewAnecdote;
