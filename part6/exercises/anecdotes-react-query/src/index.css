@@ -1,0 +1,11 @@
+html {
+  color-scheme: dark light;
+}
+
+.anecdote {
+  margin-block: 1.2rem;
+}
+
+.anecdote > * {
+  margin-block: 0.4rem;
+}
