@@ -49,3 +49,11 @@ input[type="radio"]:checked {
   margin-block-start: 0.4rem;
   font-style: italic;
 }
+
+
+li {
+  margin-block-start: 0.4rem;
+}
+form + li {
+  margin-block-start: 1.2rem;
+}

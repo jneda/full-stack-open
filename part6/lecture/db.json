@@ -3,17 +3,17 @@
     {
       "content": "the app state is in redux store",
       "important": true,
-      "id": 1
+      "id": "1"
     },
     {
       "content": "state changes are made with actions",
-      "important": false,
-      "id": 2
+      "important": true,
+      "id": "2"
     },
     {
       "id": "6b05",
       "content": "test",
-      "important": false
+      "important": true
     },
     {
       "id": "1fe0",
@@ -23,6 +23,16 @@
     {
       "id": "0952",
       "content": "pet the cat",
+      "important": false
+    },
+    {
+      "id": "198d",
+      "content": "It always works on my computer",
+      "important": false
+    },
+    {
+      "id": "243d",
+      "content": "Updating the app state after a query using React Query can be optimized",
       "important": false
     }
   ]
