@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
 const AnecdoteList = ({ anecdotes }) => (
@@ -5,7 +6,9 @@ const AnecdoteList = ({ anecdotes }) => (
     <h2>Anecdotes</h2>
     <ul>
       {anecdotes.map((anecdote) => (
-        <li key={anecdote.id}>{anecdote.content}</li>
+        <li key={anecdote.id}>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
       ))}
     </ul>
   </div>
@@ -15,8 +18,9 @@ AnecdoteList.propTypes = {
   anecdotes: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number,
-      title: PropTypes.string,
+      content: PropTypes.string,
       author: PropTypes.string,
+      info: PropTypes.string,
       votes: PropTypes.number,
     })
   ),
