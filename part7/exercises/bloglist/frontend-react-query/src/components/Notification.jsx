@@ -1,16 +1,17 @@
-import PropTypes from "prop-types";
+import { useNotification } from "../hooks/useNotification";
 
-const Notification = ({ message, type }) => {
+const Notification = () => {
+  const notification = useNotification();
+
+  if (!notification) return null;
+
+  const { message, type } = notification;
+
   return (
     <div className={`notification ${type}`} data-cy="notification">
       {message}
     </div>
   );
-};
-
-Notification.propTypes = {
-  message: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
 };
 
 export default Notification;

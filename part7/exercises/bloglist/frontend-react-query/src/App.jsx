@@ -1,20 +1,23 @@
 import { useState, useEffect, useRef } from "react";
+
+import loginService from "./services/login";
+import blogService from "./services/blogs";
+
+import { useNotify } from "./hooks/useNotification";
+
 import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
 import BlogForm from "./components/BlogForm";
 import Blogs from "./components/Blogs";
-import Notifications from "./components/Notifications";
+import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
-import loginService from "./services/login";
-import blogService from "./services/blogs";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
 
   const [user, setUser] = useState(null);
 
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const notify = useNotify();
 
   const blogFormRef = useRef();
 
@@ -36,12 +39,6 @@ const App = () => {
     }
   }, []);
 
-  const showNotification = (message, type) => {
-    const setMessage = type === "success" ? setSuccessMessage : setErrorMessage;
-    setMessage(message);
-    setTimeout(() => setMessage(null), 5000);
-  };
-
   const handleLogin = async (credentials) => {
     try {
       const user = await loginService.login(credentials);
@@ -49,12 +46,12 @@ const App = () => {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUser(user);
       blogService.setToken(user.token);
-      showNotification(`${user.name} logged in.`, "success");
+      notify(`${user.name} logged in.`, "success");
     } catch (exception) {
       const errorMessage = exception.response
         ? exception.response.data.error
         : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notify(errorMessage, "error");
     }
   };
 
@@ -63,7 +60,7 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
     blogService.setToken(null);
-    showNotification(`${userName} logged out.`, "success");
+    notify(`${userName} logged out.`, "success");
   };
 
   const handleCreateBlog = async (newBlog) => {
@@ -74,15 +71,12 @@ const App = () => {
       const newBlogs = blogs.concat(createdBlog);
       setBlogs(newBlogs);
 
-      showNotification(
-        `${createdBlog.title} by ${createdBlog.author} added.`,
-        "success",
-      );
+      notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success");
     } catch (exception) {
       const errorMessage = exception.response
         ? exception.response.data.error
         : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notify(errorMessage, "error");
     }
   };
 
@@ -99,7 +93,7 @@ const App = () => {
       const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
       setBlogs(newBlogs);
 
-      showNotification(
+      notify(
         `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
           updatedBlog.likes !== 1 ? "s" : ""
         }.`,
@@ -109,7 +103,7 @@ const App = () => {
       const errorMessage = exception.response
         ? exception.response.data.error
         : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notify(errorMessage, "error");
     }
   };
 
@@ -124,24 +118,18 @@ const App = () => {
       const newBlogs = blogs.filter((b) => b.id !== blog.id);
       setBlogs(newBlogs);
 
-      showNotification(
-        `${blog.title} by ${blog.author} has been deleted.`,
-        "success",
-      );
+      notify(`${blog.title} by ${blog.author} has been deleted.`, "success");
     } catch (exception) {
       const errorMessage = exception.response
         ? exception.response.data.error
         : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notify(errorMessage, "error");
     }
   };
 
   return (
     <>
-      <Notifications
-        successMessage={successMessage}
-        errorMessage={errorMessage}
-      />
+      <Notification />
       {user === null ? (
         <>
           <h2>Log in</h2>
