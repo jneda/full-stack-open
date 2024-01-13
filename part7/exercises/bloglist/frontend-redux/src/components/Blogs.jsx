@@ -2,9 +2,10 @@ import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import Blog from "./Blog";
 
-const Blogs = ({ onLike, user, onDelete }) => {
+const Blogs = ({ onLike, onDelete }) => {
   const blogs = useSelector((state) => state.blogs);
-  
+  const user = useSelector((state) => state.user);
+
   const descendingLikesSort = (blogA, blogB) => blogB.likes - blogA.likes;
 
   return (
@@ -27,7 +28,6 @@ const Blogs = ({ onLike, user, onDelete }) => {
 
 Blogs.propTypes = {
   onLike: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
 

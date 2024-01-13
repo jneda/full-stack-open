@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
@@ -11,14 +12,15 @@ import {
   deleteBlog,
 } from "./reducers/blogReducer";
 import { setUser } from "./reducers/userReducer";
+import { initializeUsers } from "./reducers/usersReducer";
 import { notify } from "./reducers/notificationReducer";
 
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
-import BlogForm from "./components/BlogForm";
-import Blogs from "./components/Blogs";
-import Togglable from "./components/Togglable";
+
+import BlogsPage from "./pages/BlogsPage";
+import UsersPage from "./pages/UsersPage";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -27,6 +29,8 @@ const App = () => {
 
   const blogFormRef = useRef();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchBlogs = async () => dispatch(initializeBlogs());
 
@@ -34,13 +38,19 @@ const App = () => {
   }, [user, dispatch]);
 
   useEffect(() => {
+    const fetchUsers = async () => dispatch(initializeUsers());
+
+    fetchUsers();
+  }, [dispatch]);
+
+  useEffect(() => {
     const storedUser = window.localStorage.getItem("loggedBlogappUser");
-    if (storedUser) {
+    if (storedUser && !user) {
       const user = JSON.parse(storedUser);
       dispatch(setUser(user));
       blogService.setToken(user.token);
     }
-  }, [dispatch]);
+  }, [user, dispatch]);
 
   const notifyException = (exception) => {
     const errorMessage =
@@ -57,6 +67,7 @@ const App = () => {
       dispatch(setUser(user));
       blogService.setToken(user.token);
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+      navigate("/");
 
       dispatch(notify(`${user.name} logged in.`, "success"));
     } catch (exception) {
@@ -106,27 +117,41 @@ const App = () => {
 
   return (
     <>
+      <h1>Blogs</h1>
       <Notification />
-      {user === null ? (
-        <>
-          <h2>Log in</h2>
-          <LoginForm onLogin={handleLogin} />
-        </>
-      ) : (
-        <>
-          <Logout user={user} onLogout={handleLogout} />
-          <Togglable buttonLabel="Add a blog" ref={blogFormRef}>
-            <h2>Add new blog</h2>
-            <BlogForm createBlog={handleCreateBlog} />
-          </Togglable>
-          <h2>Blogs</h2>
-          <Blogs
-            onLike={handleUpdateLikes}
-            user={user}
-            onDelete={handleDeleteBlog}
-          />
-        </>
-      )}
+      {user && <Logout user={user} onLogout={handleLogout} />}
+
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            user ? (
+              <Navigate replace to="/" />
+            ) : (
+              <>
+                <h2>Log in</h2>
+                <LoginForm onLogin={handleLogin} />
+              </>
+            )
+          }
+        />
+        <Route
+          path="/"
+          element={
+            user ? (
+              <BlogsPage
+                blogFormRef={blogFormRef}
+                handleCreateBlog={handleCreateBlog}
+                handleUpdateLikes={handleUpdateLikes}
+                handleDeleteBlog={handleDeleteBlog}
+              />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route path="/users" element={<UsersPage />} />
+      </Routes>
     </>
   );
 };
