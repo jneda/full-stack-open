@@ -37,10 +37,10 @@ const App = () => {
     const storedUser = window.localStorage.getItem("loggedBlogappUser");
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
     }
-  }, []);
+  }, [dispatch]);
 
   const notifyException = (exception) => {
     const errorMessage =
@@ -66,7 +66,7 @@ const App = () => {
 
   const handleLogout = () => {
     const userName = user.name;
-    
+
     dispatch(setUser(null));
     blogService.setToken(null);
     window.localStorage.removeItem("loggedBlogappUser");

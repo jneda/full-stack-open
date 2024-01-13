@@ -9,10 +9,6 @@ const blogSlice = createSlice({
     setBlogs(state, action) {
       return action.payload;
     },
-
-    appendBlog(state, action) {
-      state.push(action.payload);
-    },
   },
 });
 
@@ -37,10 +33,11 @@ export const initializeBlogs = () => async (dispatch) => {
   }
 };
 
-export const createBlog = (newBlog) => async (dispatch) => {
+export const createBlog = (newBlog) => async (dispatch, getState) => {
   try {
+    const state = getState();
     const createdBlog = await blogService.create(newBlog);
-    dispatch(appendBlog(createdBlog));
+    dispatch(setBlogs(state.blogs.concat(createdBlog)));
 
     dispatch(
       notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success"),
@@ -52,11 +49,12 @@ export const createBlog = (newBlog) => async (dispatch) => {
 
 export const updateBlog = (blogUpdate) => async (dispatch, getState) => {
   try {
+    const state = getState();
     const { id, ...update } = blogUpdate;
     const updatedBlog = await blogService.update(id, update);
     dispatch(
       setBlogs(
-        getState().blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)),
+        state.blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)),
       ),
     );
 
@@ -75,9 +73,10 @@ export const updateBlog = (blogUpdate) => async (dispatch, getState) => {
 
 export const deleteBlog = (blog) => async (dispatch, getState) => {
   try {
+    const state = getState();
     const { id, title, author } = blog;
     await blogService.destroy(id);
-    dispatch(setBlogs(getState().blogs.filter((b) => b.id !== id)));
+    dispatch(setBlogs(state.blogs.filter((b) => b.id !== id)));
 
     dispatch(notify(`${title} by ${author} has been deleted.`, "success"));
   } catch (error) {

@@ -4,6 +4,7 @@ import Blog from "./Blog";
 
 const Blogs = ({ onLike, user, onDelete }) => {
   const blogs = useSelector((state) => state.blogs);
+  
   const descendingLikesSort = (blogA, blogB) => blogB.likes - blogA.likes;
 
   return (
