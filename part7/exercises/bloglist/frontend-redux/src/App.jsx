@@ -1,9 +1,12 @@
 import { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { notify } from "./reducers/notificationReducer";
+
+import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Logout from "./components/Logout";
 import BlogForm from "./components/BlogForm";
 import Blogs from "./components/Blogs";
-import Notifications from "./components/Notifications";
 import Togglable from "./components/Togglable";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
@@ -13,19 +16,27 @@ const App = () => {
 
   const [user, setUser] = useState(null);
 
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const dispatch = useDispatch();
 
   const blogFormRef = useRef();
 
   useEffect(() => {
     const fetchBlogs = async () => {
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
+      try {
+        const blogs = await blogService.getAll();
+        setBlogs(blogs);
+      } catch (error) {
+        dispatch(
+          notify(
+            `${error.response.statusText}: could not fetch blogs.`,
+            "error",
+          ),
+        );
+      }
     };
 
     fetchBlogs();
-  }, [user]);
+  }, [user, dispatch]);
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem("loggedBlogappUser");
@@ -36,10 +47,12 @@ const App = () => {
     }
   }, []);
 
-  const showNotification = (message, type) => {
-    const setMessage = type === "success" ? setSuccessMessage : setErrorMessage;
-    setMessage(message);
-    setTimeout(() => setMessage(null), 5000);
+  const notifyException = (exception) => {
+    const errorMessage =
+      exception.response && exception.response.data
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+    dispatch(notify(errorMessage, "error"));
   };
 
   const handleLogin = async (credentials) => {
@@ -49,12 +62,9 @@ const App = () => {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       setUser(user);
       blogService.setToken(user.token);
-      showNotification(`${user.name} logged in.`, "success");
+      dispatch(notify(`${user.name} logged in.`, "success"));
     } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notifyException(exception);
     }
   };
 
@@ -63,7 +73,7 @@ const App = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
     blogService.setToken(null);
-    showNotification(`${userName} logged out.`, "success");
+    dispatch(notify(`${userName} logged out.`, "success"));
   };
 
   const handleCreateBlog = async (newBlog) => {
@@ -74,15 +84,14 @@ const App = () => {
       const newBlogs = blogs.concat(createdBlog);
       setBlogs(newBlogs);
 
-      showNotification(
-        `${createdBlog.title} by ${createdBlog.author} added.`,
-        "success",
+      dispatch(
+        notify(
+          `${createdBlog.title} by ${createdBlog.author} added.`,
+          "success",
+        ),
       );
     } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notifyException(exception);
     }
   };
 
@@ -99,17 +108,16 @@ const App = () => {
       const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
       setBlogs(newBlogs);
 
-      showNotification(
-        `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
-          updatedBlog.likes !== 1 ? "s" : ""
-        }.`,
-        "success",
+      dispatch(
+        notify(
+          `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
+            updatedBlog.likes !== 1 ? "s" : ""
+          }.`,
+          "success",
+        ),
       );
     } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      notifyException(exception);
     }
   };
 
@@ -124,24 +132,18 @@ const App = () => {
       const newBlogs = blogs.filter((b) => b.id !== blog.id);
       setBlogs(newBlogs);
 
-      showNotification(
-        `${blog.title} by ${blog.author} has been deleted.`,
-        "success",
+      dispatch(
+        notify(`${blog.title} by ${blog.author} has been deleted.`, "success"),
       );
     } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      showNotification(errorMessage, "error");
+      console.log(exception);
+      notifyException(exception);
     }
   };
 
   return (
     <>
-      <Notifications
-        successMessage={successMessage}
-        errorMessage={errorMessage}
-      />
+      <Notification />
       {user === null ? (
         <>
           <h2>Log in</h2>
