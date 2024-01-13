@@ -1,19 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import PropTypes from "prop-types";
-import blogService from "../services/blogs";
+import { useBlogs } from "../hooks/useBlogs";
 import Blog from "./Blog";
 
 const Blogs = ({ onLike, user, onDelete }) => {
-  const { data: blogs } = useQuery({
-    queryKey: ["blogs"],
-    queryFn: blogService.getAll,
-  });
+  const { blogs } = useBlogs();
+
   const descendingLikesSort = (blogA, blogB) => blogB.likes - blogA.likes;
 
   return (
     <div data-cy="blogs-list">
-      {blogs &&
-        blogs
+      {blogs.data &&
+        blogs.data
           .slice()
           .sort(descendingLikesSort)
           .map((blog) => (
