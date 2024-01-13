@@ -20,7 +20,7 @@ describe("<Blog />", () => {
     };
 
     container = render(
-      <Blog blog={blog} onLike={onLike} user={{}} onDelete={() => {}} />
+      <Blog blog={blog} onLike={onLike} user={{}} onDelete={() => {}} />,
     ).container;
   });
 

@@ -76,7 +76,7 @@ const App = () => {
 
       showNotification(
         `${createdBlog.title} by ${createdBlog.author} added.`,
-        "success"
+        "success",
       );
     } catch (exception) {
       const errorMessage = exception.response
@@ -103,7 +103,7 @@ const App = () => {
         `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
           updatedBlog.likes !== 1 ? "s" : ""
         }.`,
-        "success"
+        "success",
       );
     } catch (exception) {
       const errorMessage = exception.response
@@ -116,7 +116,7 @@ const App = () => {
   const handleDeleteBlog = async (blog) => {
     try {
       const confirmed = window.confirm(
-        `Delete ${blog.title} by ${blog.author}?`
+        `Delete ${blog.title} by ${blog.author}?`,
       );
       if (!confirmed) return;
 
@@ -126,7 +126,7 @@ const App = () => {
 
       showNotification(
         `${blog.title} by ${blog.author} has been deleted.`,
-        "success"
+        "success",
       );
     } catch (exception) {
       const errorMessage = exception.response

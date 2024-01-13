@@ -95,7 +95,7 @@ describe("Blog app", function () {
         cy.visit("/");
         cy.get("[data-cy='blog-item']").should(
           "not.contain",
-          "[data-cy='delete-blog-btn']"
+          "[data-cy='delete-blog-btn']",
         );
       });
     });
