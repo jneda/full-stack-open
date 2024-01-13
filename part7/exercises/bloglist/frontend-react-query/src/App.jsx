@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
@@ -20,6 +21,25 @@ const App = () => {
   const notify = useNotify();
 
   const blogFormRef = useRef();
+
+  const queryClient = useQueryClient();
+
+  const newBlogMutation = useMutation({
+    mutationFn: blogService.create,
+
+    onSuccess: (createdBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(["blogs"], blogs.concat(createdBlog));
+      notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success");
+    },
+
+    onError: (exception) => {
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+      notify(errorMessage, "error");
+    },
+  });
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -64,20 +84,9 @@ const App = () => {
   };
 
   const handleCreateBlog = async (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility();
-
-      const createdBlog = await blogService.create(newBlog);
-      const newBlogs = blogs.concat(createdBlog);
-      setBlogs(newBlogs);
-
-      notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success");
-    } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      notify(errorMessage, "error");
-    }
+    newBlogMutation.mutate(newBlog);
+    // close togglable form
+    blogFormRef.current.toggleVisibility();
   };
 
   const handleUpdateLikes = async (blog) => {
@@ -144,7 +153,6 @@ const App = () => {
           </Togglable>
           <h2>Blogs</h2>
           <Blogs
-            blogs={blogs}
             onLike={handleUpdateLikes}
             user={user}
             onDelete={handleDeleteBlog}
