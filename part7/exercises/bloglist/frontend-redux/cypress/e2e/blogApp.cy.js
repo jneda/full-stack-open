@@ -150,7 +150,7 @@ describe("Blog app", function () {
           .click();
 
         cy.get("[data-cy='blog-item']")
-          .contains("Doggoes")
+          .eq(0)
           .parent()
           .children()
           .should("contain", "Doggoes doggoes")
