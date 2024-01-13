@@ -75,9 +75,9 @@ blogsRouter.delete("/:id", async (request, response) => {
     return response.status(403).json({ error: "You are forbidden." });
   }
 
-  await Blog.findByIdAndDelete(request.params.id);
+  const deletedBlog = await Blog.findByIdAndDelete(request.params.id);
 
-  response.status(204).end();
+  response.status(200).json(deletedBlog);
 });
 
 module.exports = blogsRouter;

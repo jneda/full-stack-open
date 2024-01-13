@@ -220,7 +220,7 @@ describe("deleting a blog", () => {
     });
   });
 
-  test("should succeed with status code 204 when providing a valid id", async () => {
+  test("should succeed with status code 200 and send back the deleted blog when providing a valid id", async () => {
     const blogsAtStart = await helper.blogsInDb();
 
     const blogToDelete = blogsAtStart[0];
@@ -228,10 +228,16 @@ describe("deleting a blog", () => {
       user: user._id,
     });
 
-    await api
+    const response = await api
       .delete(`${baseUrl}/${blogToDelete.id}`)
       .set("Authorization", `Bearer ${token}`)
-      .expect(204);
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const deletedBlog = response.body;
+    delete deletedBlog.user;
+
+    expect(deletedBlog).toEqual(blogToDelete);
 
     const blogsAtEnd = await helper.blogsInDb();
 
