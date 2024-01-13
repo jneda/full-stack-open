@@ -1,0 +1,106 @@
+body {
+  background: #222;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 2rem;
+}
+
+input,
+button {
+  font-family: inherit;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+input {
+  background: inherit;
+  color: inherit;
+}
+
+button {
+  background: #eee;
+  color: #222;
+  cursor: pointer;
+}
+
+form > * {
+  margin: 0.6rem 0;
+}
+
+form div {
+  width: 16rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+form button {
+  display: block;
+}
+
+.loggedIn {
+  display: inline-block;
+  margin-inline-end: 0.4rem;
+}
+
+.blog {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #333;
+  border-radius: 2px;
+}
+
+.blog + .blog {
+  margin-top: 0.6rem;
+}
+
+.blogEntry {
+  margin-block: 0.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.blogEntry span {
+  display: inline-block;
+  margin-inline: 0.6rem;
+}
+
+.blogEntry button {
+  margin-inline-start: 0.6rem;
+}
+
+.blogDetails > * {
+  margin: 0.6rem 0;
+}
+
+.like button {
+  margin-inline-start: 0.4em;
+}
+
+.author {
+  font-style: italic;
+  color: #bbb;
+}
+
+.notification {
+  background: #333;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-block-end: 0.6rem;
+}
+
+.error {
+  color: #d44;
+}
+
+.success {
+  color: #4d4;
+}
+
+.togglable {
+  margin: 0.6rem 0;
+}
