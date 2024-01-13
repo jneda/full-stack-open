@@ -100,7 +100,7 @@ describe("Blog app", function () {
       });
     });
 
-    describe.only("And several blogs exist", function () {
+    describe("And several blogs exist", function () {
       beforeEach(function () {
         cy.createBlog({
           title: "Doggoes doggoes",
@@ -137,17 +137,22 @@ describe("Blog app", function () {
           .click();
 
         cy.get("[data-cy='blog-item']")
-          .eq(1)
-          .should("contain", "Doggoes doggoes")
-          .and("contain", "Likes: 1");
+          .contains("Doggoes")
+          .parent()
+          .children()
+          .should("contain", "Likes: 1");
 
         cy.get("[data-cy='blog-item']")
-          .eq(1)
+          .contains("Doggoes")
+          .parent()
+          .children()
           .find("[data-cy='blog-like-btn']")
           .click();
 
         cy.get("[data-cy='blog-item']")
-          .eq(0)
+          .contains("Doggoes")
+          .parent()
+          .children()
           .should("contain", "Doggoes doggoes")
           .and("contain", "Likes: 2");
       });
