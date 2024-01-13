@@ -10,7 +10,12 @@ import Blogs from "./components/Blogs";
 import Togglable from "./components/Togglable";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import {
+  initializeBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+} from "./reducers/blogReducer";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -20,18 +25,7 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        dispatch(initializeBlogs());
-      } catch (error) {
-        dispatch(
-          notify(
-            `${error.response.statusText}: could not fetch blogs.`,
-            "error",
-          ),
-        );
-      }
-    };
+    const fetchBlogs = async () => dispatch(initializeBlogs());
 
     fetchBlogs();
   }, [user, dispatch]);
@@ -75,43 +69,19 @@ const App = () => {
   };
 
   const handleCreateBlog = async (newBlog) => {
-    try {
-      blogFormRef.current.toggleVisibility();
+    blogFormRef.current.toggleVisibility();
 
-      dispatch(createBlog(newBlog));
-
-      dispatch(
-        notify(`${newBlog.title} by ${newBlog.author} added.`, "success"),
-      );
-    } catch (exception) {
-      notifyException(exception);
-    }
+    dispatch(createBlog(newBlog));
   };
 
   const handleUpdateLikes = async (blog) => {
-    try {
-      const update = {
-        ...blog,
-        user: blog.user.id,
-        likes: blog.likes + 1,
-      };
-      delete update.id;
+    const update = {
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+    };
 
-      const updatedBlog = await blogService.update(blog.id, update);
-      // const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
-      // setBlogs(newBlogs);
-
-      dispatch(
-        notify(
-          `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
-            updatedBlog.likes !== 1 ? "s" : ""
-          }.`,
-          "success",
-        ),
-      );
-    } catch (exception) {
-      notifyException(exception);
-    }
+    dispatch(updateBlog(update));
   };
 
   const handleDeleteBlog = async (blog) => {
@@ -121,13 +91,7 @@ const App = () => {
       );
       if (!confirmed) return;
 
-      await blogService.destroy(blog.id);
-      // const newBlogs = blogs.filter((b) => b.id !== blog.id);
-      // setBlogs(newBlogs);
-
-      dispatch(
-        notify(`${blog.title} by ${blog.author} has been deleted.`, "success"),
-      );
+      dispatch(deleteBlog(blog));
     } catch (exception) {
       console.log(exception);
       notifyException(exception);
