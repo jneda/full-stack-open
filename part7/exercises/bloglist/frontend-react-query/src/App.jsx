@@ -14,8 +14,6 @@ import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-
   const [user, setUser] = useState(null);
 
   const notify = useNotify();
@@ -41,14 +39,53 @@ const App = () => {
     },
   });
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      const blogs = await blogService.getAll();
-      setBlogs(blogs);
-    };
+  const updateBlogMutation = useMutation({
+    mutationFn: blogService.update,
 
-    fetchBlogs();
-  }, [user]);
+    onSuccess: (updatedBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.map((blog) => (blog.id !== updatedBlog.id ? blog : updatedBlog)),
+      );
+      notify(
+        `${updatedBlog.title} by ${updatedBlog.author} now has ${updatedBlog.likes} like${
+          updatedBlog.likes !== 1 ? "s" : ""
+        }.`,
+        "success",
+      );
+    },
+
+    onError: (exception) => {
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+      notify(errorMessage, "error");
+    },
+  });
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: blogService.destroy,
+
+    onSuccess: (deletedBlog) => {
+      const blogs = queryClient.getQueryData(["blogs"]);
+      queryClient.setQueryData(
+        ["blogs"],
+        blogs.filter((blog) => blog.id !== deletedBlog.id),
+      );
+      notify(
+        `${deletedBlog.title} by ${deletedBlog.author} has been deleted.`,
+        "success",
+      );
+    },
+
+    onError: (exception) => {
+      const errorMessage = exception.response
+        ? exception.response.data.error
+        : "An unexpected error occurred.";
+      notify(errorMessage, "error");
+    },
+  });
 
   useEffect(() => {
     const storedUser = window.localStorage.getItem("loggedBlogappUser");
@@ -90,50 +127,20 @@ const App = () => {
   };
 
   const handleUpdateLikes = async (blog) => {
-    try {
-      const update = {
-        ...blog,
-        user: blog.user.id,
-        likes: blog.likes + 1,
-      };
-      delete update.id;
+    const update = {
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+    };
 
-      const updatedBlog = await blogService.update(blog.id, update);
-      const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
-      setBlogs(newBlogs);
-
-      notify(
-        `${blog.title} by ${blog.author} now has ${updatedBlog.likes} like${
-          updatedBlog.likes !== 1 ? "s" : ""
-        }.`,
-        "success",
-      );
-    } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      notify(errorMessage, "error");
-    }
+    updateBlogMutation.mutate(update);
   };
 
   const handleDeleteBlog = async (blog) => {
-    try {
-      const confirmed = window.confirm(
-        `Delete ${blog.title} by ${blog.author}?`,
-      );
-      if (!confirmed) return;
+    const confirmed = window.confirm(`Delete ${blog.title} by ${blog.author}?`);
+    if (!confirmed) return;
 
-      await blogService.destroy(blog.id);
-      const newBlogs = blogs.filter((b) => b.id !== blog.id);
-      setBlogs(newBlogs);
-
-      notify(`${blog.title} by ${blog.author} has been deleted.`, "success");
-    } catch (exception) {
-      const errorMessage = exception.response
-        ? exception.response.data.error
-        : "An unexpected error occurred.";
-      notify(errorMessage, "error");
-    }
+    deleteBlogMutation.mutate(blog);
   };
 
   return (
