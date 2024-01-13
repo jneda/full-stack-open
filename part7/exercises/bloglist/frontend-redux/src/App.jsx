@@ -10,10 +10,9 @@ import Blogs from "./components/Blogs";
 import Togglable from "./components/Togglable";
 import loginService from "./services/login";
 import blogService from "./services/blogs";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
-
   const [user, setUser] = useState(null);
 
   const dispatch = useDispatch();
@@ -23,8 +22,7 @@ const App = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const blogs = await blogService.getAll();
-        setBlogs(blogs);
+        dispatch(initializeBlogs());
       } catch (error) {
         dispatch(
           notify(
@@ -80,15 +78,10 @@ const App = () => {
     try {
       blogFormRef.current.toggleVisibility();
 
-      const createdBlog = await blogService.create(newBlog);
-      const newBlogs = blogs.concat(createdBlog);
-      setBlogs(newBlogs);
+      dispatch(createBlog(newBlog));
 
       dispatch(
-        notify(
-          `${createdBlog.title} by ${createdBlog.author} added.`,
-          "success",
-        ),
+        notify(`${newBlog.title} by ${newBlog.author} added.`, "success"),
       );
     } catch (exception) {
       notifyException(exception);
@@ -105,8 +98,8 @@ const App = () => {
       delete update.id;
 
       const updatedBlog = await blogService.update(blog.id, update);
-      const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
-      setBlogs(newBlogs);
+      // const newBlogs = blogs.map((b) => (b.id !== blog.id ? b : updatedBlog));
+      // setBlogs(newBlogs);
 
       dispatch(
         notify(
@@ -129,8 +122,8 @@ const App = () => {
       if (!confirmed) return;
 
       await blogService.destroy(blog.id);
-      const newBlogs = blogs.filter((b) => b.id !== blog.id);
-      setBlogs(newBlogs);
+      // const newBlogs = blogs.filter((b) => b.id !== blog.id);
+      // setBlogs(newBlogs);
 
       dispatch(
         notify(`${blog.title} by ${blog.author} has been deleted.`, "success"),
@@ -158,7 +151,6 @@ const App = () => {
           </Togglable>
           <h2>Blogs</h2>
           <Blogs
-            blogs={blogs}
             onLike={handleUpdateLikes}
             user={user}
             onDelete={handleDeleteBlog}
