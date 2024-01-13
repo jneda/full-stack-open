@@ -1,5 +1,16 @@
-import { useState, useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import loginService from "./services/login";
+import blogService from "./services/blogs";
+
+import {
+  initializeBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+} from "./reducers/blogReducer";
+import { setUser } from "./reducers/userReducer";
 import { notify } from "./reducers/notificationReducer";
 
 import Notification from "./components/Notification";
@@ -8,17 +19,9 @@ import Logout from "./components/Logout";
 import BlogForm from "./components/BlogForm";
 import Blogs from "./components/Blogs";
 import Togglable from "./components/Togglable";
-import loginService from "./services/login";
-import blogService from "./services/blogs";
-import {
-  initializeBlogs,
-  createBlog,
-  updateBlog,
-  deleteBlog,
-} from "./reducers/blogReducer";
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
 
@@ -51,9 +54,10 @@ const App = () => {
     try {
       const user = await loginService.login(credentials);
 
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      setUser(user);
+      dispatch(setUser(user));
       blogService.setToken(user.token);
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
+
       dispatch(notify(`${user.name} logged in.`, "success"));
     } catch (exception) {
       notifyException(exception);
@@ -62,9 +66,11 @@ const App = () => {
 
   const handleLogout = () => {
     const userName = user.name;
-    window.localStorage.removeItem("loggedBlogappUser");
-    setUser(null);
+    
+    dispatch(setUser(null));
     blogService.setToken(null);
+    window.localStorage.removeItem("loggedBlogappUser");
+
     dispatch(notify(`${userName} logged out.`, "success"));
   };
 
