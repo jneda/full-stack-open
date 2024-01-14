@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import { notify } from "./notificationReducer";
+import { initializeUsers } from "./usersReducer";
 
 const blogSlice = createSlice({
   name: "blogs",
@@ -42,6 +43,8 @@ export const createBlog = (newBlog) => async (dispatch, getState) => {
     dispatch(
       notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success"),
     );
+
+    dispatch(initializeUsers());
   } catch (error) {
     notifyException(error, dispatch);
   }
@@ -79,6 +82,8 @@ export const deleteBlog = (blog) => async (dispatch, getState) => {
     dispatch(setBlogs(state.blogs.filter((b) => b.id !== id)));
 
     dispatch(notify(`${title} by ${author} has been deleted.`, "success"));
+
+    dispatch(initializeUsers());
   } catch (error) {
     notifyException(error, dispatch);
   }
