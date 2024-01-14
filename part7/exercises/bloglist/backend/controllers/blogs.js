@@ -54,7 +54,14 @@ blogsRouter.put("/:id", async (request, response) => {
     throw new Error("Resource not found.");
   }
 
-  await updatedBlog.populate("user", { username: 1, name: 1 });
+  await updatedBlog.populate([
+    {
+      path: "user",
+      select: { username: 1, name: 1 },
+    },
+    { path: "comments", select: { content: 1 } },
+  ]);
+
   response.json(updatedBlog);
 });
 
