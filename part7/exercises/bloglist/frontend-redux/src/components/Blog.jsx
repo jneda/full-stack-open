@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog, user, onDelete }) => {
+const Blog = ({ blog }) => {
   return (
     <div className="blog" data-cy="blog-item">
       <div className="blogEntry">
@@ -9,7 +9,6 @@ const Blog = ({ blog, user, onDelete }) => {
           {blog.title}
           <span className="author"> - {blog.author}</span>
         </Link>
-        
       </div>
     </div>
   );
@@ -17,8 +16,6 @@ const Blog = ({ blog, user, onDelete }) => {
 
 Blog.propTypes = {
   blog: PropTypes.object,
-  user: PropTypes.object.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default Blog;

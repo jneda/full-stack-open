@@ -11,12 +11,8 @@ import {
 import loginService from "./services/login";
 import blogService from "./services/blogs";
 
-import {
-  initializeBlogs,
-  createBlog,
-  updateBlog,
-  deleteBlog,
-} from "./reducers/blogReducer";
+import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+
 import { setUser } from "./reducers/userReducer";
 import { initializeUsers } from "./reducers/usersReducer";
 import { notify } from "./reducers/notificationReducer";
@@ -101,31 +97,6 @@ const App = () => {
     dispatch(createBlog(newBlog));
   };
 
-  const handleUpdateLikes = async (blog) => {
-    const update = {
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-    };
-
-    dispatch(updateBlog(update));
-  };
-
-  const handleDeleteBlog = async (blog) => {
-    try {
-      const confirmed = window.confirm(
-        `Delete ${blog.title} by ${blog.author}?`,
-      );
-      if (!confirmed) return;
-
-      dispatch(deleteBlog(blog));
-      navigate("/");
-    } catch (exception) {
-      console.log(exception);
-      notifyException(exception);
-    }
-  };
-
   return (
     <>
       <Navigation />
@@ -134,10 +105,13 @@ const App = () => {
 
       <Routes>
         <Route
-          path="/login"
+          path="/"
           element={
             user ? (
-              <Navigate replace to="/" />
+              <BlogsPage
+                blogFormRef={blogFormRef}
+                handleCreateBlog={handleCreateBlog}
+              />
             ) : (
               <>
                 <h2>Log in</h2>
@@ -146,33 +120,9 @@ const App = () => {
             )
           }
         />
-        <Route
-          path="/"
-          element={
-            user ? (
-              <BlogsPage
-                blogFormRef={blogFormRef}
-                handleCreateBlog={handleCreateBlog}
-                handleUpdateLikes={handleUpdateLikes}
-                handleDeleteBlog={handleDeleteBlog}
-              />
-            ) : (
-              <Navigate replace to="/login" />
-            )
-          }
-        />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/users/:id" element={<UserPage userId={userId} />} />
-        <Route
-          path="blogs/:id"
-          element={
-            <BlogDetailsPage
-              blogId={blogId}
-              onLike={handleUpdateLikes}
-              onDelete={handleDeleteBlog}
-            />
-          }
-        />
+        <Route path="blogs/:id" element={<BlogDetailsPage blogId={blogId} />} />
       </Routes>
     </>
   );
