@@ -1,6 +1,13 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useMatch,
+  Link,
+} from "react-router-dom";
 
 import loginService from "./services/login";
 import blogService from "./services/blogs";
@@ -21,6 +28,8 @@ import Logout from "./components/Logout";
 
 import BlogsPage from "./pages/BlogsPage";
 import UsersPage from "./pages/UsersPage";
+import UserPage from "./pages/UserPage";
+import BlogDetailsPage from "./pages/BlogDetailsPage";
 
 const App = () => {
   const user = useSelector((state) => state.user);
@@ -30,6 +39,18 @@ const App = () => {
   const blogFormRef = useRef();
 
   const navigate = useNavigate();
+
+  const userIdMatch = useMatch("/users/:id");
+  let userId = null;
+  if (userIdMatch) {
+    userId = userIdMatch.params.id;
+  }
+
+  const blogIdMatch = useMatch("/blogs/:id");
+  let blogId = null;
+  if (blogIdMatch) {
+    blogId = blogIdMatch.params.id;
+  }
 
   useEffect(() => {
     const fetchBlogs = async () => dispatch(initializeBlogs());
@@ -117,9 +138,24 @@ const App = () => {
 
   return (
     <>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Blogs</Link>
+          </li>
+          <li>
+            <Link to="/users">Users</Link>
+          </li>
+          {user && (
+            <li>
+              <Logout user={user} onLogout={handleLogout} />
+            </li>
+          )}
+        </ul>
+      </nav>
+      
       <h1>Blogs</h1>
       <Notification />
-      {user && <Logout user={user} onLogout={handleLogout} />}
 
       <Routes>
         <Route
@@ -151,6 +187,8 @@ const App = () => {
           }
         />
         <Route path="/users" element={<UsersPage />} />
+        <Route path="/users/:id" element={<UserPage userId={userId} />} />
+        <Route path="blogs/:id" element={<BlogDetailsPage blogId={blogId} />} />
       </Routes>
     </>
   );

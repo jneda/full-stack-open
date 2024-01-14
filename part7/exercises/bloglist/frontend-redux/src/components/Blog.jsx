@@ -1,5 +1,6 @@
-import PropTypes from "prop-types";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const Blog = ({ blog, onLike, user, onDelete }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -11,8 +12,10 @@ const Blog = ({ blog, onLike, user, onDelete }) => {
   return (
     <div className="blog" data-cy="blog-item">
       <div className="blogEntry">
-        {blog.title}
-        <span className="author"> - {blog.author}</span>
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title}
+          <span className="author"> - {blog.author}</span>
+        </Link>
         <button onClick={toggleDetails} data-cy="blog-details-toggle-btn">
           {showDetails ? "Hide" : "View"}
         </button>

@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const UsersPage = () => {
   const users = useSelector((state) => state.users);
@@ -6,11 +7,24 @@ const UsersPage = () => {
   return (
     <>
       <h2>Users</h2>
-      {users.map((user) => (
-        <li key={user.id}>
-          {user.name} - {user.blogs.length} blogs created
-        </li>
-      ))}
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Blogs created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((user) => (
+            <tr key={user.id}>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 };
