@@ -118,7 +118,7 @@ describe("Blog app", function () {
         cy.visit("/");
       });
 
-      it.only("Blogs are ordered in descending likes order", function () {
+      it("Blogs are ordered in descending likes order", function () {
         cy.get("a").contains("Sneaky mice").click();
 
         cy.get("[data-cy='blog-like-btn']").click();
