@@ -1,8 +1,7 @@
 import { useSelector } from "react-redux";
-import PropTypes from "prop-types";
 import Blog from "./Blog";
 
-const Blogs = ({ onLike, onDelete }) => {
+const Blogs = () => {
   const blogs = useSelector((state) => state.blogs);
   const user = useSelector((state) => state.user);
 
@@ -14,21 +13,10 @@ const Blogs = ({ onLike, onDelete }) => {
         .slice()
         .sort(descendingLikesSort)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            onLike={onLike}
-            user={user}
-            onDelete={onDelete}
-          />
+          <Blog key={blog.id} blog={blog} user={user} />
         ))}
     </div>
   );
-};
-
-Blogs.propTypes = {
-  onLike: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default Blogs;

@@ -34,13 +34,15 @@ const BlogDetailsPage = ({ blogId }) => {
   if (!blog) return null;
 
   return (
-    <div className="blogDetails">
+    <div className="blogDetails" data-cy="blog-details">
       <h2>
         {blog.title} - {blog.author}
       </h2>
       <a href={blog.info}>{blog.info}</a>
       <div className="like">
-        <span data-cy="blog-likes">{blog.likes} likes</span>
+        <span data-cy="blog-likes">
+          {blog.likes} like{blog.likes !== 1 ? "s" : ""}
+        </span>
         <button onClick={() => handleUpdateLikes(blog)} data-cy="blog-like-btn">
           Like
         </button>

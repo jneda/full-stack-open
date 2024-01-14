@@ -68,14 +68,15 @@ describe("Blog app", function () {
 
       it("A blog can be liked", function () {
         cy.visit("/");
-        cy.get("[data-cy='blog-details-toggle-btn']").click();
+        cy.get("a").contains("Doggoes doggoes").click();
         cy.get("[data-cy='blog-like-btn']").click();
 
-        cy.get("[data-cy='blog-likes']").should("contain", "Likes: 1");
+        cy.get("[data-cy='blog-likes']").should("contain", "1 like");
       });
 
       it("A blog can be deleted by its user", function () {
         cy.visit("/");
+        cy.get("a").contains("Doggoes doggoes").click();
         cy.get("[data-cy='delete-blog-btn']").click();
 
         cy.get("[data-cy='blog-item']").should("have.length", 0);
@@ -93,7 +94,8 @@ describe("Blog app", function () {
         cy.login({ username: user.username, password: user.password });
 
         cy.visit("/");
-        cy.get("[data-cy='blog-item']").should(
+        cy.get("a").contains("Doggoes doggoes").click();
+        cy.get("[data-cy='blog-details']").should(
           "not.contain",
           "[data-cy='delete-blog-btn']",
         );
@@ -114,47 +116,34 @@ describe("Blog app", function () {
         });
 
         cy.visit("/");
-
-        cy.get("[data-cy='blog-item']")
-          .find("[data-cy='blog-details-toggle-btn']")
-          .each((btn) => btn.click());
       });
 
-      it("Blogs are ordered in descending likes order", function () {
-        cy.get("[data-cy='blog-item']")
-          .eq(1)
-          .find("[data-cy='blog-like-btn']")
-          .click();
+      it.only("Blogs are ordered in descending likes order", function () {
+        cy.get("a").contains("Sneaky mice").click();
+
+        cy.get("[data-cy='blog-like-btn']").click();
+
+        cy.get("[data-cy='blog-likes']").should("contain", "1 like");
+
+        cy.get("[data-cy='home-link']").click();
+
+        cy.get("[data-cy='blog-item']").eq(0).should("contain", "Sneaky mice");
+
+        cy.get("a").contains("Doggoes doggoes").click();
+
+        cy.get("[data-cy='blog-like-btn']").click();
+
+        cy.get("[data-cy='blog-likes']").should("contain", "1 like");
+
+        cy.get("[data-cy='blog-like-btn']").click();
+
+        cy.get("[data-cy='blog-likes']").should("contain", "2 likes");
+
+        cy.get("[data-cy='home-link']").click();
 
         cy.get("[data-cy='blog-item']")
           .eq(0)
-          .should("contain", "Sneaky mice")
-          .and("contain", "Likes: 1");
-
-        cy.get("[data-cy='blog-item']")
-          .eq(1)
-          .find("[data-cy='blog-like-btn']")
-          .click();
-
-        cy.get("[data-cy='blog-item']")
-          .contains("Doggoes")
-          .parent()
-          .children()
-          .should("contain", "Likes: 1");
-
-        cy.get("[data-cy='blog-item']")
-          .contains("Doggoes")
-          .parent()
-          .children()
-          .find("[data-cy='blog-like-btn']")
-          .click();
-
-        cy.get("[data-cy='blog-item']")
-          .eq(0)
-          .parent()
-          .children()
-          .should("contain", "Doggoes doggoes")
-          .and("contain", "Likes: 2");
+          .should("contain", "Doggoes doggoes");
       });
     });
   });

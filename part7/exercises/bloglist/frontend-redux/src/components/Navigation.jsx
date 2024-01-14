@@ -6,7 +6,7 @@ const Navigation = () => {
     <nav>
       <ul>
         <li>
-          <Link to="/">Blogs</Link>
+          <Link to="/" data-cy="home-link">Blogs</Link>
         </li>
         <li>
           <Link to="/users">Users</Link>
