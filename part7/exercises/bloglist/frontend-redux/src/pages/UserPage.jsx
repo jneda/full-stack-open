@@ -1,13 +1,12 @@
 import { useSelector } from "react-redux";
 
 const UserPage = ({ userId }) => {
-  const users = useSelector((state) => state.users);
+  const user = useSelector((state) => {
+    if (!userId) return null;
+    return state.users.find((user) => user.id === userId);
+  });
 
-  if (!userId) return null;
-
-  const user = users.find((user) => user.id === userId);
-
-  return (
+  return user ? (
     <>
       <h2>{user.name}</h2>
       <h3>Added blogs:</h3>
@@ -17,7 +16,7 @@ const UserPage = ({ userId }) => {
         ))}
       </ul>
     </>
-  );
+  ) : null;
 };
 
 export default UserPage;
