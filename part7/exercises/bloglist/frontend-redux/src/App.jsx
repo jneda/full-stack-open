@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useMatch } from "react-router-dom";
 
 import blogService from "./services/blogs";
 
-import { initializeBlogs, createBlog } from "./reducers/blogReducer";
+import { initializeBlogs } from "./reducers/blogReducer";
 
 import { setUser } from "./reducers/userReducer";
 import { initializeUsers } from "./reducers/usersReducer";
@@ -22,8 +22,6 @@ const App = () => {
   const user = useSelector((state) => state.user);
 
   const dispatch = useDispatch();
-
-  const blogFormRef = useRef();
 
   const userIdMatch = useMatch("/users/:id");
   let userId = null;
@@ -58,12 +56,6 @@ const App = () => {
     }
   }, [user, dispatch]);
 
-  const handleCreateBlog = async (newBlog) => {
-    blogFormRef.current.toggleVisibility();
-
-    dispatch(createBlog(newBlog));
-  };
-
   return (
     <>
       <Navigation />
@@ -71,19 +63,7 @@ const App = () => {
       <Notification />
 
       <Routes>
-        <Route
-          path="/"
-          element={
-            user ? (
-              <BlogsPage
-                blogFormRef={blogFormRef}
-                handleCreateBlog={handleCreateBlog}
-              />
-            ) : (
-              <Login />
-            )
-          }
-        />
+        <Route path="/" element={user ? <BlogsPage /> : <Login />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/users/:id" element={<UserPage userId={userId} />} />
         <Route path="blogs/:id" element={<BlogDetailsPage blogId={blogId} />} />
