@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const Blog = ({ blog }) => {
+const BlogLink = ({ blog }) => {
   return (
     <div className="blog" data-cy="blog-item">
       <div className="blogEntry">
@@ -14,8 +14,8 @@ const Blog = ({ blog }) => {
   );
 };
 
-Blog.propTypes = {
+BlogLink.propTypes = {
   blog: PropTypes.object,
 };
 
-export default Blog;
+export default BlogLink;

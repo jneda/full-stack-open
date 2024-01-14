@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import Blog from "./Blog";
+import BlogLink from "./BlogLink";
 
 const Blogs = () => {
   const blogs = useSelector((state) => state.blogs);
@@ -13,7 +13,7 @@ const Blogs = () => {
         .slice()
         .sort(descendingLikesSort)
         .map((blog) => (
-          <Blog key={blog.id} blog={blog} user={user} />
+          <BlogLink key={blog.id} blog={blog} user={user} />
         ))}
     </div>
   );

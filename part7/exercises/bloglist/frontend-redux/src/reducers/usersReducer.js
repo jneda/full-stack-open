@@ -19,7 +19,6 @@ export const initializeUsers = () => async (dispatch) => {
     const users = await usersService.getAll();
     dispatch(setUsers(users));
   } catch (error) {
-    console.log(error);
     dispatch(
       notify(`${error.response.statusText}: could not fetch users.`, "error"),
     );

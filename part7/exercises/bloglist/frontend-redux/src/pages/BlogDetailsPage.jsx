@@ -2,6 +2,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateBlog, deleteBlog } from "../reducers/blogReducer";
 
+import BlogDetails from "../components/BlogDetails";
+import BlogComments from "../components/BlogComments";
+
 const BlogDetailsPage = ({ blogId }) => {
   const blog = useSelector((state) => {
     if (!blogId) return null;
@@ -16,6 +19,7 @@ const BlogDetailsPage = ({ blogId }) => {
   const handleUpdateLikes = async (blog) => {
     const update = {
       ...blog,
+      comments: blog.comments.map((comment) => comment.id),
       user: blog.user.id,
       likes: blog.likes + 1,
     };
@@ -34,31 +38,15 @@ const BlogDetailsPage = ({ blogId }) => {
   if (!blog) return null;
 
   return (
-    <div className="blogDetails" data-cy="blog-details">
-      <h2>
-        {blog.title} - {blog.author}
-      </h2>
-      <a href={blog.info}>{blog.info}</a>
-      <div className="like">
-        <span data-cy="blog-likes">
-          {blog.likes} like{blog.likes !== 1 ? "s" : ""}
-        </span>
-        <button onClick={() => handleUpdateLikes(blog)} data-cy="blog-like-btn">
-          Like
-        </button>
-      </div>
-      <div>
-        <span>Added by {blog.user.name}</span>
-        {user && user.id === blog.user?.id ? (
-          <button
-            onClick={() => handleDeleteBlog(blog)}
-            data-cy="delete-blog-btn"
-          >
-            Delete
-          </button>
-        ) : null}
-      </div>
-    </div>
+    <>
+      <BlogDetails
+        blog={blog}
+        user={user}
+        onLike={handleUpdateLikes}
+        onDelete={handleDeleteBlog}
+      />
+      <BlogComments blog={blog} />
+    </>
   );
 };
 

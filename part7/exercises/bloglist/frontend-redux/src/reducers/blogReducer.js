@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
+import commentService from "../services/comments";
 import { notify } from "./notificationReducer";
 import { initializeUsers } from "./usersReducer";
 
@@ -54,7 +55,9 @@ export const updateBlog = (blogUpdate) => async (dispatch, getState) => {
   try {
     const state = getState();
     const { id, ...update } = blogUpdate;
+
     const updatedBlog = await blogService.update(id, update);
+
     dispatch(
       setBlogs(
         state.blogs.map((blog) => (blog.id !== id ? blog : updatedBlog)),
@@ -85,6 +88,24 @@ export const deleteBlog = (blog) => async (dispatch, getState) => {
 
     dispatch(initializeUsers());
   } catch (error) {
+    notifyException(error, dispatch);
+  }
+};
+
+export const createComment = (newComment) => async (dispatch) => {
+  try {
+    const createdComment = await commentService.create(newComment);
+
+    dispatch(initializeBlogs());
+
+    dispatch(
+      notify(
+        `The comment" ${createdComment.content}" has been added.`,
+        "success",
+      ),
+    );
+  } catch (error) {
+    console.log(error);
     notifyException(error, dispatch);
   }
 };
