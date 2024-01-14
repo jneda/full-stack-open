@@ -41,6 +41,24 @@ form button {
   display: block;
 }
 
+nav ul {
+  padding: 0.6rem 1rem;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  align-content: center;
+  background: rgb(51, 51, 51);
+}
+
+nav ul li {
+  padding-inline: 0.4rem;
+}
+
+a:visited,
+a:active {
+  color: color-mix(in srgb, rgb(0, 102, 204), rgb(127, 127, 127));
+}
+
 .loggedIn {
   display: inline-block;
   margin-inline-end: 0.4rem;
@@ -75,7 +93,7 @@ form button {
   margin: 0.6rem 0;
 }
 
-.like button {
+.blogDetails button {
   margin-inline-start: 0.4em;
 }
 

@@ -6,7 +6,6 @@ import {
   Navigate,
   useNavigate,
   useMatch,
-  Link,
 } from "react-router-dom";
 
 import loginService from "./services/login";
@@ -22,9 +21,9 @@ import { setUser } from "./reducers/userReducer";
 import { initializeUsers } from "./reducers/usersReducer";
 import { notify } from "./reducers/notificationReducer";
 
+import Navigation from "./components/Navigation";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
-import Logout from "./components/Logout";
 
 import BlogsPage from "./pages/BlogsPage";
 import UsersPage from "./pages/UsersPage";
@@ -96,16 +95,6 @@ const App = () => {
     }
   };
 
-  const handleLogout = () => {
-    const userName = user.name;
-
-    dispatch(setUser(null));
-    blogService.setToken(null);
-    window.localStorage.removeItem("loggedBlogappUser");
-
-    dispatch(notify(`${userName} logged out.`, "success"));
-  };
-
   const handleCreateBlog = async (newBlog) => {
     blogFormRef.current.toggleVisibility();
 
@@ -130,6 +119,7 @@ const App = () => {
       if (!confirmed) return;
 
       dispatch(deleteBlog(blog));
+      navigate("/");
     } catch (exception) {
       console.log(exception);
       notifyException(exception);
@@ -138,22 +128,7 @@ const App = () => {
 
   return (
     <>
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Blogs</Link>
-          </li>
-          <li>
-            <Link to="/users">Users</Link>
-          </li>
-          {user && (
-            <li>
-              <Logout user={user} onLogout={handleLogout} />
-            </li>
-          )}
-        </ul>
-      </nav>
-      
+      <Navigation />
       <h1>Blogs</h1>
       <Notification />
 
@@ -188,7 +163,16 @@ const App = () => {
         />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/users/:id" element={<UserPage userId={userId} />} />
-        <Route path="blogs/:id" element={<BlogDetailsPage blogId={blogId} />} />
+        <Route
+          path="blogs/:id"
+          element={
+            <BlogDetailsPage
+              blogId={blogId}
+              onLike={handleUpdateLikes}
+              onDelete={handleDeleteBlog}
+            />
+          }
+        />
       </Routes>
     </>
   );
