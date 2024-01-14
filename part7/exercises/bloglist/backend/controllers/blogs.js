@@ -34,17 +34,11 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.put("/:id", async (request, response) => {
-  const user = request.user;
-
   const blogToUpdate = await Blog.findById(request.params.id);
 
   if (!blogToUpdate) {
     throw new Error("Resource not found.");
   }
-
-  // if (user.id !== blogToUpdate.user.toString()) {
-  //   return response.status(403).json({ error: "You are forbidden." });
-  // }
 
   const update = request.body;
 
