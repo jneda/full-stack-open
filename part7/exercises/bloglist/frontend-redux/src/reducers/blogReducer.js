@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import blogService from "../services/blogs";
 import commentService from "../services/comments";
 import { notify } from "./notificationReducer";
-import { initializeUsers } from "./usersReducer";
+import { setUsers } from "./usersReducer";
 
 const blogSlice = createSlice({
   name: "blogs",
@@ -38,14 +38,37 @@ export const initializeBlogs = () => async (dispatch) => {
 export const createBlog = (newBlog) => async (dispatch, getState) => {
   try {
     const state = getState();
+
     const createdBlog = await blogService.create(newBlog);
+
     dispatch(setBlogs(state.blogs.concat(createdBlog)));
+
+    dispatch(
+      setUsers(
+        state.users.map((user) => {
+          console.log(user.id, createdBlog.user.id);
+          if (user.id !== createdBlog.user.id) {
+            return user;
+          }
+
+          const updatedUser = {
+            ...user,
+            blogs: user.blogs.concat({
+              title: createdBlog.title,
+              author: createdBlog.author,
+              url: createdBlog.url,
+              id: createdBlog.id,
+            }),
+          };
+
+          return updatedUser;
+        }),
+      ),
+    );
 
     dispatch(
       notify(`${createdBlog.title} by ${createdBlog.author} added.`, "success"),
     );
-
-    dispatch(initializeUsers());
   } catch (error) {
     notifyException(error, dispatch);
   }
@@ -81,22 +104,63 @@ export const deleteBlog = (blog) => async (dispatch, getState) => {
   try {
     const state = getState();
     const { id, title, author } = blog;
-    await blogService.destroy(id);
+    const deletedBlog = await blogService.destroy(id);
+
     dispatch(setBlogs(state.blogs.filter((b) => b.id !== id)));
 
-    dispatch(notify(`${title} by ${author} has been deleted.`, "success"));
+    dispatch(
+      setUsers(
+        state.users.map((user) => {
+          if (user.id !== deletedBlog.user) {
+            return user;
+          }
 
-    dispatch(initializeUsers());
+          const updatedUser = {
+            ...user,
+            blogs: user.blogs.filter((blog) => {
+              return blog.id !== deletedBlog.id;
+            }),
+          };
+
+          return updatedUser;
+        }),
+      ),
+    );
+
+    dispatch(notify(`${title} by ${author} has been deleted.`, "success"));
   } catch (error) {
     notifyException(error, dispatch);
   }
 };
 
-export const createComment = (newComment) => async (dispatch) => {
+export const createComment = (newComment) => async (dispatch, getState) => {
   try {
+    const state = getState();
     const createdComment = await commentService.create(newComment);
 
-    dispatch(initializeBlogs());
+    dispatch(
+      setBlogs(
+        state.blogs.map((blog) => {
+          if (blog.id !== createdComment.blog) {
+            return blog;
+          }
+
+          const commentWithoutBlog = {
+            ...createdComment,
+          };
+          delete commentWithoutBlog.blog;
+
+          const updatedComments = blog.comments.concat(commentWithoutBlog);
+
+          const updatedBlog = {
+            ...blog,
+            comments: updatedComments,
+          };
+
+          return updatedBlog;
+        }),
+      ),
+    );
 
     dispatch(
       notify(
@@ -105,7 +169,6 @@ export const createComment = (newComment) => async (dispatch) => {
       ),
     );
   } catch (error) {
-    console.log(error);
     notifyException(error, dispatch);
   }
 };
