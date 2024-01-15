@@ -1,16 +1,22 @@
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
+import { TableRow, TableCell, Link as MuiLink } from "@mui/material";
+
 const BlogLink = ({ blog }) => {
   return (
-    <div className="blog" data-cy="blog-item">
-      <div className="blogEntry">
-        <Link to={`/blogs/${blog.id}`}>
+    <TableRow
+      className="blog"
+      data-cy="blog-item"
+      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+    >
+      <TableCell className="blogEntry" component="th" scope="row">
+        <MuiLink component={Link} to={`/blogs/${blog.id}`}>
           {blog.title}
-          <span className="author"> - {blog.author}</span>
-        </Link>
-      </div>
-    </div>
+        </MuiLink>
+      </TableCell>
+      <TableCell className="author">by {blog.author}</TableCell>
+    </TableRow>
   );
 };
 

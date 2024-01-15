@@ -6,6 +6,8 @@ import loginService from "../services/login";
 import blogService from "../services/blogs";
 import LoginForm from "./LoginForm";
 
+import { Container } from "@mui/material";
+
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,10 +31,10 @@ const Login = () => {
     }
   };
   return (
-    <>
+    <Container component="main" maxWidth="xs">
       <h2>Log in</h2>
       <LoginForm onLogin={handleLogin} />
-    </>
+    </Container>
   );
 };
 

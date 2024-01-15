@@ -1,6 +1,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
+import { Box, TextField, Button, Container } from "@mui/material";
+
 const LoginForm = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,33 +16,39 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <>
-      <form onSubmit={login} data-cy="login-form">
-        <div>
-          Username:{" "}
-          <input
-            type="text"
-            name="username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-            data-cy="username-input"
-          />
-        </div>
-        <div>
-          Password:{" "}
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-            data-cy="password-input"
-          />
-        </div>
-        <button type="submit" data-cy="login-submit">
-          Log in
-        </button>
-      </form>
-    </>
+    <Box component="form" onSubmit={login} data-cy="login-form" sx={{ mt: 1 }}>
+      <TextField
+        type="text"
+        margin="normal"
+        required
+        fullWidth
+        label="Username"
+        name="username"
+        value={username}
+        onChange={({ target }) => setUsername(target.value)}
+        data-cy="username-input"
+      />
+      <TextField
+        type="password"
+        margin="normal"
+        required
+        fullWidth
+        label="Password"
+        name="password"
+        value={password}
+        onChange={({ target }) => setPassword(target.value)}
+        data-cy="password-input"
+      />
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        data-cy="login-submit"
+        sx={{ mt: 3, mb: 2 }}
+      >
+        Log in
+      </Button>
+    </Box>
   );
 };
 

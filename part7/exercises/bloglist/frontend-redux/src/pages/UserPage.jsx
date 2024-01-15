@@ -1,5 +1,7 @@
 import { useSelector } from "react-redux";
 
+import { List, ListItem, Paper } from "@mui/material";
+
 const UserPage = ({ userId }) => {
   const user = useSelector((state) => {
     if (!userId) return null;
@@ -10,11 +12,11 @@ const UserPage = ({ userId }) => {
     <>
       <h2>{user.name}</h2>
       <h3>Added blogs:</h3>
-      <ul>
+      <List component={Paper} dense={true}>
         {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
+          <ListItem key={blog.id}>{blog.title}</ListItem>
         ))}
-      </ul>
+      </List>
     </>
   ) : null;
 };

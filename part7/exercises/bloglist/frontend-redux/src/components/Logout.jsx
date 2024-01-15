@@ -3,6 +3,8 @@ import { notify } from "../reducers/notificationReducer";
 import { setUser } from "../reducers/userReducer";
 import blogService from "../services/blogs";
 
+import { Button } from "@mui/material";
+
 const Logout = () => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -20,7 +22,9 @@ const Logout = () => {
   return user ? (
     <li>
       <span className="loggedIn">{user.name} logged in</span>
-      <button onClick={handleLogout}>Log out</button>
+      <Button onClick={handleLogout} variant="outlined" sx={{ ml: 1 }}>
+        Log out
+      </Button>
     </li>
   ) : null;
 };

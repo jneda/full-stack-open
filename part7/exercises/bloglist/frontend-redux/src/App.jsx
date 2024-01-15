@@ -18,6 +18,8 @@ import UsersPage from "./pages/UsersPage";
 import UserPage from "./pages/UserPage";
 import BlogDetailsPage from "./pages/BlogDetailsPage";
 
+import { Container } from "@mui/material";
+
 const App = () => {
   const user = useSelector((state) => state.user);
 
@@ -57,7 +59,7 @@ const App = () => {
   }, [user, dispatch]);
 
   return (
-    <>
+    <Container>
       <Navigation />
       <h1>Blogs</h1>
       <Notification />
@@ -68,7 +70,7 @@ const App = () => {
         <Route path="/users/:id" element={<UserPage userId={userId} />} />
         <Route path="blogs/:id" element={<BlogDetailsPage blogId={blogId} />} />
       </Routes>
-    </>
+    </Container>
   );
 };
 
