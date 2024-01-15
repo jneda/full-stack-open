@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { createComment } from "../reducers/blogReducer";
-import { TextField, Button, Box, List, ListItem } from "@mui/material";
+import { TextField, Button, Box, List, ListItem, Paper } from "@mui/material";
 
 const BlogComments = ({ blog }) => {
   const dispatch = useDispatch();
@@ -23,14 +23,14 @@ const BlogComments = ({ blog }) => {
     <div>
       <h3 style={{ fontFamily: "Roboto" }}>Comments</h3>
       <form onSubmit={addComment}>
-        <Box sx={{ display: "flex" }}>
+        <Box sx={{ display: "flex", mb: 2 }}>
           <TextField name="content" size="small" />
           <Button type="submit" siwe="small" variant="outlined" sx={{ ml: 1 }}>
             Add comment
           </Button>
         </Box>
       </form>
-      <List>
+      <List component={Paper}>
         {blog.comments.map((comment) => (
           <ListItem key={comment.id} style={{ fontFamily: "Roboto" }}>
             {comment.content}

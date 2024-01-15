@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import Alert from "@mui/material/Alert";
 
 const Notification = () => {
   const notification = useSelector((state) => state.notification);
@@ -8,9 +9,13 @@ const Notification = () => {
   const { type, message } = notification;
 
   return (
-    <div className={`notification ${type}`} data-cy="notification">
+    <Alert
+      severity={type}
+      className={`notification ${type}`}
+      data-cy="notification"
+    >
       {message}
-    </div>
+    </Alert>
   );
 };
 

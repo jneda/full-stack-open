@@ -20,12 +20,17 @@ const Logout = () => {
   };
 
   return user ? (
-    <li>
+    <>
       <span className="loggedIn">{user.name} logged in</span>
-      <Button onClick={handleLogout} variant="outlined" sx={{ ml: 1 }}>
+      <Button
+        color="inherit"
+        onClick={handleLogout}
+        variant="outlined"
+        sx={{ ml: 2 }}
+      >
         Log out
       </Button>
-    </li>
+    </>
   ) : null;
 };
 

@@ -1,25 +1,36 @@
 import { Link } from "react-router-dom";
 import Logout from "./Logout";
 
-import { Link as MuiLink, List, ListItem } from "@mui/material";
+import { AppBar, Button, IconButton } from "@mui/material";
+import ToolBar from "@mui/material/Toolbar";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Navigation = () => {
   return (
-    <nav style={{ fontFamily: "Roboto" }}>
-      <List>
-        <ListItem>
-          <MuiLink component={Link} to="/" data-cy="home-link">
+    <AppBar style={{ fontFamily: "Roboto" }} position="static">
+      <ToolBar>
+        <IconButton
+          size="large"
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Button color="primary" variant="text" sx={{ mr: 2 }}>
+          <Link to="/" data-cy="home-link">
             Blogs
-          </MuiLink>
-        </ListItem>
-        <ListItem>
-          <MuiLink component={Link} to="/users">
+          </Link>
+        </Button>
+        <Button color="primary" variant="text" sx={{ mr: 2 }}>
+          <Link component={Link} to="/users">
             Users
-          </MuiLink>
-        </ListItem>
+          </Link>
+        </Button>
         <Logout />
-      </List>
-    </nav>
+      </ToolBar>
+    </AppBar>
   );
 };
 

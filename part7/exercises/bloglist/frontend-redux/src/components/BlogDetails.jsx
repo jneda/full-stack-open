@@ -10,8 +10,13 @@ const BlogDetails = ({ blog, user, onLike, onDelete }) => {
       <h2 style={{ fontFamily: "Roboto" }}>
         {blog.title} - {blog.author}
       </h2>
-      <MuiLink href={blog.url}>{blog.url}</MuiLink>
-      <div className="like">
+      <MuiLink
+        href={blog.url}
+        style={{ display: "block", marginBottom: "1rem" }}
+      >
+        {blog.url}
+      </MuiLink>
+      <div className="like" style={{ display: "block", marginBottom: "1rem" }}>
         <span data-cy="blog-likes">
           {blog.likes} like{blog.likes !== 1 ? "s" : ""}
         </span>
