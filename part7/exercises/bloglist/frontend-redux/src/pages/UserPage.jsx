@@ -10,9 +10,9 @@ const UserPage = ({ userId }) => {
 
   return user ? (
     <>
-      <h2>{user.name}</h2>
-      <h3>Added blogs:</h3>
-      <List component={Paper} dense={true}>
+      <h2 style={{ fontFamily: "Roboto" }}>{user.name}</h2>
+      <h3 style={{ fontFamily: "Roboto" }}>Added blogs:</h3>
+      <List component={Paper} dense={true} style={{ fontFamily: "Roboto" }}>
         {user.blogs.map((blog) => (
           <ListItem key={blog.id}>{blog.title}</ListItem>
         ))}

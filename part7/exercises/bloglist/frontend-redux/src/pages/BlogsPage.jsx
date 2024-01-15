@@ -21,7 +21,7 @@ const BlogsPage = () => {
     <>
       <Container maxWidth="xs">
         <Togglable buttonLabel="Add a blog" ref={blogFormRef}>
-          <h2>Add new blog</h2>
+          <h2 style={{ fontFamily: "Roboto" }}>Add new blog</h2>
           <BlogForm createBlog={handleCreateBlog} />
         </Togglable>
       </Container>

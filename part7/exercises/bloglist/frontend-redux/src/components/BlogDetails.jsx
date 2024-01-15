@@ -1,24 +1,40 @@
+import { Button, Link as MuiLink } from "@mui/material";
+
 const BlogDetails = ({ blog, user, onLike, onDelete }) => {
   return (
-    <div className="blogDetails" data-cy="blog-details">
-      <h2>
+    <div
+      className="blogDetails"
+      data-cy="blog-details"
+      style={{ fontFamily: "Roboto" }}
+    >
+      <h2 style={{ fontFamily: "Roboto" }}>
         {blog.title} - {blog.author}
       </h2>
-      <a href={blog.url}>{blog.url}</a>
+      <MuiLink href={blog.url}>{blog.url}</MuiLink>
       <div className="like">
         <span data-cy="blog-likes">
           {blog.likes} like{blog.likes !== 1 ? "s" : ""}
         </span>
-        <button onClick={() => onLike(blog)} data-cy="blog-like-btn">
+        <Button
+          onClick={() => onLike(blog)}
+          data-cy="blog-like-btn"
+          variant="outlined"
+          sx={{ ml: 1 }}
+        >
           Like
-        </button>
+        </Button>
       </div>
       <div>
         <span>Added by {blog.user.name}</span>
         {user && user.id === blog.user?.id ? (
-          <button onClick={() => onDelete(blog)} data-cy="delete-blog-btn">
+          <Button
+            onClick={() => onDelete(blog)}
+            data-cy="delete-blog-btn"
+            variant="outlined"
+            sx={{ ml: 1 }}
+          >
             Delete
-          </button>
+          </Button>
         ) : null}
       </div>
     </div>

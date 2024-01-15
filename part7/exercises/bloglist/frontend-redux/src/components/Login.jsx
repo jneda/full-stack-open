@@ -32,7 +32,7 @@ const Login = () => {
   };
   return (
     <Container component="main" maxWidth="xs">
-      <h2>Log in</h2>
+      <h2 style={{ fontFamily: "Roboto" }}>Log in</h2>
       <LoginForm onLogin={handleLogin} />
     </Container>
   );

@@ -17,7 +17,7 @@ const UsersPage = () => {
 
   return (
     <>
-      <h2>Users</h2>
+      <h2 style={{ fontFamily: "Roboto" }}>Users</h2>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
           <TableHead>

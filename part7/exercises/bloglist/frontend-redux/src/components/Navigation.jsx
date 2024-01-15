@@ -1,18 +1,24 @@
 import { Link } from "react-router-dom";
 import Logout from "./Logout";
 
+import { Link as MuiLink, List, ListItem } from "@mui/material";
+
 const Navigation = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <Link to="/" data-cy="home-link">Blogs</Link>
-        </li>
-        <li>
-          <Link to="/users">Users</Link>
-        </li>
+    <nav style={{ fontFamily: "Roboto" }}>
+      <List>
+        <ListItem>
+          <MuiLink component={Link} to="/" data-cy="home-link">
+            Blogs
+          </MuiLink>
+        </ListItem>
+        <ListItem>
+          <MuiLink component={Link} to="/users">
+            Users
+          </MuiLink>
+        </ListItem>
         <Logout />
-      </ul>
+      </List>
     </nav>
   );
 };

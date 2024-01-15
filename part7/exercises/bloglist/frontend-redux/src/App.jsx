@@ -61,7 +61,7 @@ const App = () => {
   return (
     <Container>
       <Navigation />
-      <h1>Blogs</h1>
+      <h1 style={{ fontFamily: "Roboto" }}>Blogs</h1>
       <Notification />
 
       <Routes>
