@@ -1,6 +1,6 @@
-const { ApolloServer, GraphQLError } = require("@apollo/server");
+const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-const { v1: uuid } = require("uuid");
+const { GraphQLError } = require("graphql");
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 const Book = require("./models/book");
@@ -146,7 +146,12 @@ const resolvers = {
 
     authorCount: async () => Author.collection.countDocuments(),
 
-    allBooks: async () => Book.find({}),
+    allBooks: async (root, args) => {
+      const { genre } = args;
+      if (!genre) return Book.find({});
+
+      return Book.find({ genres: { $all: genre } });
+    },
 
     allAuthors: async () => Author.find({}),
   },
