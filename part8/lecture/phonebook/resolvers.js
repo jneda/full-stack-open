@@ -2,6 +2,9 @@ const { GraphQLError } = require("graphql");
 const jwt = require("jsonwebtoken");
 const Person = require("./models/person");
 const User = require("./models/user");
+const { PubSub } = require("graphql-subscriptions");
+
+const pubSub = new PubSub();
 
 const resolvers = {
   Query: {
@@ -50,6 +53,8 @@ const resolvers = {
           },
         });
       }
+
+      pubSub.publish("PERSON_ADDED", { personAdded: person });
 
       return person;
     },
@@ -131,6 +136,10 @@ const resolvers = {
 
       return currentUser;
     },
+  },
+
+  Subscription: {
+    personAdded: { subscribe: () => pubSub.asyncIterator("PERSON_ADDED") },
   },
 };
 
