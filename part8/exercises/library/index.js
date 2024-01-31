@@ -171,9 +171,16 @@ const resolvers = {
 
     allBooks: async (root, args) => {
       const { genre } = args;
-      if (!genre) return Book.find({});
+      const query = genre ? { genres: { $all: genre } } : {};
 
-      return Book.find({ genres: { $all: genre } });
+      let books;
+      try {
+        books = await Book.find(query).populate("author");
+      } catch (error) {
+        console.error(error);
+      }
+
+      return books;
     },
 
     allAuthors: async () => Author.find({}),
