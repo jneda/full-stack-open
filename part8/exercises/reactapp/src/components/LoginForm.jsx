@@ -15,6 +15,7 @@ const LoginForm = ({ show, setToken }) => {
       setToken(token);
       localStorage.setItem("library-user-token", token);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data]);
 
   const submit = (e) => {
