@@ -1,14 +1,13 @@
 import PropTypes from "prop-types";
+import { useQuery } from "@apollo/client";
+import { All_GENRES } from "../queries";
 
-const GenresFilter = ({ books, setGenresFilter }) => {
-  const genres = books.reduce((genres, book) => {
-    book.genres.forEach((genre) => {
-      if (!genres.includes(genre)) {
-        genres.push(genre);
-      }
-    });
-    return genres;
-  }, []);
+const GenresFilter = ({ booksQuery }) => {
+  const genresQuery = useQuery(All_GENRES);
+
+  if (genresQuery.loading) return null;
+
+  const genres = genresQuery.data.allGenres;
 
   const capitalize = (string) => {
     return string
@@ -20,11 +19,21 @@ const GenresFilter = ({ books, setGenresFilter }) => {
   return (
     <div>
       {genres.map((genre) => (
-        <button key={genre} onClick={() => setGenresFilter(genre)}>
+        <button
+          key={genre}
+          onClick={() => {
+            booksQuery.refetch({ genre });
+          }}
+        >
           {capitalize(genre)}
         </button>
       ))}
-      <button key="all genres" onClick={() => setGenresFilter(null)}>
+      <button
+        key="all genres"
+        onClick={() => {
+          booksQuery.refetch({ genre: null });
+        }}
+      >
         All Genres
       </button>
     </div>
@@ -32,8 +41,7 @@ const GenresFilter = ({ books, setGenresFilter }) => {
 };
 
 GenresFilter.propTypes = {
-  books: PropTypes.array,
-  setGenresFilter: PropTypes.func,
+  booksQuery: PropTypes.object,
 };
 
 export default GenresFilter;
