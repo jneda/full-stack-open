@@ -25,7 +25,7 @@ export const ALL_BOOKS = gql`
   }
 `;
 
-export const All_GENRES = gql`
+export const ALL_GENRES = gql`
   query allGenres {
     allGenres
   }

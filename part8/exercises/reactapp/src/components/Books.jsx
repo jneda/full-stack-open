@@ -2,9 +2,11 @@ import PropTypes from "prop-types";
 import { useQuery, NetworkStatus } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 import GenresFilter from "./GenresFilter";
+import { useGenresFilter } from "../hooks/useGenresFilter";
 
 const Books = (props) => {
   const query = useQuery(ALL_BOOKS, { variables: { genres: null } });
+  const { genresFilter } = useGenresFilter();
 
   if (!props.show) {
     return null;
@@ -16,6 +18,12 @@ const Books = (props) => {
   return (
     <div>
       <h2>Books</h2>
+
+      {genresFilter ? (
+        <p>
+          In genre <strong>{genresFilter}</strong>
+        </p>
+      ) : null}
 
       <table>
         <tbody>

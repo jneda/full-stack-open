@@ -1,9 +1,11 @@
 import PropTypes from "prop-types";
 import { useQuery } from "@apollo/client";
-import { All_GENRES } from "../queries";
+import { ALL_GENRES } from "../queries";
+import { useGenresFilter } from "../hooks/useGenresFilter";
 
 const GenresFilter = ({ booksQuery }) => {
-  const genresQuery = useQuery(All_GENRES);
+  const genresQuery = useQuery(ALL_GENRES);
+  const { setGenresFilter } = useGenresFilter();
 
   if (genresQuery.loading) return null;
 
@@ -16,13 +18,18 @@ const GenresFilter = ({ booksQuery }) => {
       .join(" ");
   };
 
+  const handleGenreFilterChange = (genre) => {
+    setGenresFilter(genre);
+    booksQuery.refetch({ genre });
+  };
+
   return (
     <div>
       {genres.map((genre) => (
         <button
           key={genre}
           onClick={() => {
-            booksQuery.refetch({ genre });
+            handleGenreFilterChange(genre);
           }}
         >
           {capitalize(genre)}
@@ -31,7 +38,7 @@ const GenresFilter = ({ booksQuery }) => {
       <button
         key="all genres"
         onClick={() => {
-          booksQuery.refetch({ genre: null });
+          handleGenreFilterChange(null);
         }}
       >
         All Genres
