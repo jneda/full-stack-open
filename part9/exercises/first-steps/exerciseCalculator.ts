@@ -47,6 +47,9 @@ const exerciseCalculator = () => {
       case 3: {
         return "excellent - you reached the goal";
       }
+      default: {
+        throw new Error("Unexepected rating value");
+      }
     }
   };
 
@@ -86,8 +89,6 @@ const exerciseCalculator = () => {
     }
     console.error(errorMessage);
   }
-
-  // console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
 };
 
 exerciseCalculator();
