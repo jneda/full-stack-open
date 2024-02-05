@@ -31,7 +31,6 @@ const App = () => {
   const notify = (message) => {
     setErrorMessage(message);
     setTimeout(() => {
-      console.log("Timeout elapsed");
       setErrorMessage(null);
     }, 5000);
   };
