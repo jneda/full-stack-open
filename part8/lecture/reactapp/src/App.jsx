@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useQuery, useApolloClient } from "@apollo/client";
+import { useQuery, useApolloClient, useSubscription } from "@apollo/client";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import PhoneForm from "./components/PhoneForm";
 import LoginForm from "./components/LoginForm";
-import { ALL_PERSONS } from "./queries";
+import { ALL_PERSONS, PERSON_ADDED } from "./queries";
+import { updateCache } from "./helpers";
 
 const App = () => {
   const [token, setToken] = useState(null);
@@ -12,6 +13,16 @@ const App = () => {
 
   const client = useApolloClient();
   const result = useQuery(ALL_PERSONS);
+
+  useSubscription(PERSON_ADDED, {
+    onData: ({ data, client }) => {
+      const {
+        data: { personAdded },
+      } = data;
+      notify(`${personAdded.name} added`);
+      updateCache(client.cache, { query: ALL_PERSONS }, personAdded);
+    },
+  });
 
   if (result.loading) {
     return <div>Loading...</div>;
