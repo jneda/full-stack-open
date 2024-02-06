@@ -1,23 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Note } from "./types";
+import { getAllNotes, createNote } from "./noteService";
 
 const App = () => {
   const [newNote, setNewNote] = useState("");
   const [notes, setNotes] = useState<Note[]>([{ id: 1, content: "Testing" }]);
 
-  const createNote = (evt: React.SyntheticEvent) => {
-    evt.preventDefault();
-    const noteToAdd = {
-      content: newNote,
-      id: notes.length + 1,
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const notes: Note[] = await getAllNotes();
+      setNotes(notes);
     };
-    setNotes(notes.concat(noteToAdd));
+
+    fetchNotes();
+  }, []);
+
+  const addNote = async (evt: React.SyntheticEvent) => {
+    evt.preventDefault();
+    const addedNote = await createNote({ content: newNote });
+    setNotes(notes.concat(addedNote));
     setNewNote("");
   };
 
   return (
     <div>
-      <form onSubmit={createNote}>
+      <form onSubmit={addNote}>
         <input
           value={newNote}
           onChange={({ target }) => setNewNote(target.value)}
