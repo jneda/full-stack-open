@@ -1,4 +1,4 @@
-import { NewPatient, NonSensitivePatient, Patient } from "./types";
+import { Gender, NewPatient, NonSensitivePatient, Patient } from "./types";
 
 export const deSensitivizePatient = ({
   id,
@@ -14,9 +14,8 @@ export const deSensitivizePatient = ({
   occupation,
 });
 
-const isString = (s: unknown): s is string => {
-  return typeof s === "string" || s instanceof String;
-};
+const isString = (s: unknown): s is string =>
+  typeof s === "string" || s instanceof String;
 
 const parseString = (s: unknown): string => {
   if (!isString(s)) {
@@ -27,6 +26,30 @@ const parseString = (s: unknown): string => {
   }
 
   return s;
+};
+
+const isDate = (date: string): boolean => Boolean(Date.parse(date));
+
+const parseDate = (date: unknown): string => {
+  if (!isString(date) || !isDate(date)) {
+    throw new Error(`Incorrect or missing date: ${date}`);
+  }
+
+  return date;
+};
+
+const isGender = (s: string): s is Gender => {
+  return Object.values(Gender)
+    .map((v) => v.toString())
+    .includes(s);
+};
+
+const parseGender = (gender: unknown): Gender => {
+  if (!isString(gender) || !isGender(gender)) {
+    throw new Error(`Incorrect or missing gender: ${gender}`);
+  }
+
+  return gender;
 };
 
 export const toNewPatient = (obj: unknown): NewPatient => {
@@ -47,8 +70,8 @@ export const toNewPatient = (obj: unknown): NewPatient => {
   const newPatient = {
     name: parseString(obj.name),
     ssn: parseString(obj.ssn),
-    dateOfBirth: parseString(obj.dateOfBirth),
-    gender: parseString(obj.gender),
+    dateOfBirth: parseDate(obj.dateOfBirth),
+    gender: parseGender(obj.gender),
     occupation: parseString(obj.occupation),
   };
 
