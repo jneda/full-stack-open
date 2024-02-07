@@ -4,6 +4,22 @@
   color-scheme: dark;
 }
 
+.notification {
+  border: 2px solid;
+  border-radius: 2px;
+  padding: 0.8rem;
+}
+
+.notification.failure {
+  color: crimson;
+  border-color: crimson;
+}
+
+.notification.success {
+  color: limegreen;
+  border-color: limegreen;
+}
+
 #form-inputs-wrapper {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

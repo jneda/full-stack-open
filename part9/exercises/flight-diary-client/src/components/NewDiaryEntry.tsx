@@ -1,28 +1,47 @@
 import React, { useState } from "react";
 import diaryService from "../services/diaryService";
+import { toNewDiaryEntry } from "../utils";
+import { Notification, NotificationType } from "../types";
 
-const NewDiaryEntry = () => {
+interface NewDiaryEntryProps {
+  onComplete: (notification: Notification) => void;
+}
+
+const NewDiaryEntry = ({ onComplete }: NewDiaryEntryProps) => {
   const [date, setDate] = useState("");
   const [visibility, setVisibility] = useState("");
   const [weather, setWeather] = useState("");
   const [comment, setComment] = useState("");
 
-  const handleSubmit = (evt: React.SyntheticEvent) => {
+  const handleSubmit = async (evt: React.SyntheticEvent) => {
     evt.preventDefault();
-    
-    const newEntry = {
-      date,
-      visibility,
-      weather,
-      comment,
-    };
 
-    diaryService.createEntry(newEntry);
+    try {
+      const newEntry = toNewDiaryEntry({
+        date,
+        visibility,
+        weather,
+        comment,
+      });
 
-    setDate("");
-    setVisibility("");
-    setWeather("");
-    setComment("");
+      const addedEntry = await diaryService.createEntry(newEntry);
+
+      onComplete({
+        type: NotificationType.Success,
+        message: `New entry for ${addedEntry.date} has been added.`,
+      });
+
+      setDate("");
+      setVisibility("");
+      setWeather("");
+      setComment("");
+    } catch (error: unknown) {
+      let errorMessage = "An error occurred.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      onComplete({ type: NotificationType.Failure, message: errorMessage });
+    }
   };
 
   return (

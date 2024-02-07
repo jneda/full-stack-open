@@ -24,3 +24,13 @@ export interface DiaryEntry {
 export type NewDiaryEntry = Omit<DiaryEntry, "id">;
 
 export type NonSensitiveDiaryEntry = Omit<DiaryEntry, "comment">;
+
+export enum NotificationType {
+  Success = "success",
+  Failure = "failure",
+}
+
+export interface Notification {
+  message: string;
+  type: NotificationType;
+}
