@@ -30,3 +30,13 @@
 form button {
   margin-block-start: 0.4rem;
 }
+
+.radio-inputs-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 3rem);
+  align-items: center;
+}
+
+.radio-inputs-wrapper input[type="radio"] {
+  height: 0.8rem;
+}

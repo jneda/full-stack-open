@@ -29,6 +29,9 @@ function App() {
     fetchDiaries();
   }, []);
 
+  const handleNewDiaryEntry = (addedEntry: DiaryEntry) =>
+    setDiaryEntries(diaryEntries.concat(addedEntry));
+
   const notify = (notification: INotification) => {
     setNotification(notification);
     setTimeout(() => setNotification(null), 5000);
@@ -37,7 +40,7 @@ function App() {
   return (
     <>
       <h1>Flight Diary</h1>
-      <NewDiaryEntry onComplete={notify} />
+      <NewDiaryEntry onAdd={handleNewDiaryEntry} onNotify={notify} />
       {notification && <Notification notification={notification} />}
       {diaryEntries.length === 0 ? (
         <p>Loading...</p>

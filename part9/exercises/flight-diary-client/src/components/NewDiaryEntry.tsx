@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import diaryService from "../services/diaryService";
 import { toNewDiaryEntry } from "../utils";
-import { Notification, NotificationType } from "../types";
+import {
+  Notification,
+  NotificationType,
+  Visibility,
+  Weather,
+  DiaryEntry,
+} from "../types";
+import RadioInput from "./RadioInput";
 
 interface NewDiaryEntryProps {
-  onComplete: (notification: Notification) => void;
+  onAdd: (addedEntry: DiaryEntry) => void;
+  onNotify: (notification: Notification) => void;
 }
 
-const NewDiaryEntry = ({ onComplete }: NewDiaryEntryProps) => {
+const NewDiaryEntry = ({ onAdd, onNotify }: NewDiaryEntryProps) => {
   const [date, setDate] = useState("");
   const [visibility, setVisibility] = useState("");
   const [weather, setWeather] = useState("");
@@ -26,7 +34,9 @@ const NewDiaryEntry = ({ onComplete }: NewDiaryEntryProps) => {
 
       const addedEntry = await diaryService.createEntry(newEntry);
 
-      onComplete({
+      onAdd(addedEntry);
+
+      onNotify({
         type: NotificationType.Success,
         message: `New entry for ${addedEntry.date} has been added.`,
       });
@@ -40,7 +50,7 @@ const NewDiaryEntry = ({ onComplete }: NewDiaryEntryProps) => {
       if (error instanceof Error) {
         errorMessage = error.message;
       }
-      onComplete({ type: NotificationType.Failure, message: errorMessage });
+      onNotify({ type: NotificationType.Failure, message: errorMessage });
     }
   };
 
@@ -51,21 +61,38 @@ const NewDiaryEntry = ({ onComplete }: NewDiaryEntryProps) => {
         <label htmlFor="date">Date </label>
         <input
           id="date"
+          type="date"
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
         <label htmlFor="visibility">Visibility </label>
-        <input
-          id="visibility"
-          value={visibility}
-          onChange={({ target }) => setVisibility(target.value)}
-        />
+        <div className="radio-inputs-wrapper">
+          {Object.values(Visibility).map((visibility) => {
+            const value = visibility.toString();
+            return (
+              <RadioInput
+                key={value}
+                name="visibility"
+                value={value}
+                onChange={() => setVisibility(value)}
+              />
+            );
+          })}
+        </div>
         <label htmlFor="weather">Weather </label>
-        <input
-          id="weather"
-          value={weather}
-          onChange={({ target }) => setWeather(target.value)}
-        />
+        <div className="radio-inputs-wrapper">
+          {Object.values(Weather).map((weather) => {
+            const value = weather.toString();
+            return (
+              <RadioInput
+                key={value}
+                name="weather"
+                value={value}
+                onChange={() => setWeather(value)}
+              />
+            );
+          })}
+        </div>
         <label htmlFor="comment">Comment </label>
         <input
           id="comment"
