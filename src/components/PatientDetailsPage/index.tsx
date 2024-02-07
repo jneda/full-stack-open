@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { Patient } from "../../types";
 import patientService from "../../services/patients";
-import TransgenderIcon from "@mui/icons-material/Transgender";
-import FemaleIcon from "@mui/icons-material/Female";
-import MaleIcon from "@mui/icons-material/Male";
+import GenderIcon from "./GenderIcon";
+import Entry from "./Entry";
 
 interface Props {
   patientId: string;
@@ -25,32 +24,17 @@ const PatientDetailsPage = ({ patientId }: Props) => {
     return <p>Loading...</p>;
   }
 
-  let genderIcon;
-  switch (patient.gender) {
-    case "male": {
-      genderIcon = <MaleIcon />;
-      break;
-    }
-    case "female": {
-      genderIcon = <FemaleIcon />;
-      break;
-    }
-    case "other": {
-      genderIcon = <TransgenderIcon />;
-      break;
-    }
-    default: {
-      throw new Error(`Unexpected gender: ${patient.gender}`);
-    }
-  }
-
   return (
     <>
       <h2>
-        {patient.name} {genderIcon}
+        {patient.name} <GenderIcon patient={patient} />
       </h2>
       <p>Ssn: {patient.ssn}</p>
       <p>Occupation: {patient.occupation}</p>
+      <h2>Entries</h2>
+      {patient.entries.map((e) => (
+        <Entry key={e.id} entry={e} />
+      ))}
     </>
   );
 };
