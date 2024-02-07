@@ -2,3 +2,19 @@
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
   color-scheme: light;
 }
+
+.entry {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  padding: 0.8rem;
+}
+
+.entry + .entry {
+  margin-block-start: 0.8rem;
+}
+
+.entry .entry-heading {
+  display: flex;
+  align-items: center;
+}
