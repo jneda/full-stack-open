@@ -35,33 +35,40 @@ const HospitalForm = ({ onCancel, onSubmit }: Props) => {
       <form onSubmit={addEntry}>
         <TextField
           label="Date"
-          placeholder="YYYY-MM-DD"
+          type="date"
+          InputLabelProps={{ shrink: true }}
           fullWidth
+          margin="normal"
           value={date}
           onChange={({ target }) => setDate(target.value)}
         />
         <TextField
           label="Specialist"
           fullWidth
+          margin="normal"
           value={specialist}
           onChange={({ target }) => setSpecialist(target.value)}
         />
         <TextField
           label="Description"
           fullWidth
+          margin="normal"
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
         <TextField
           label="Discharge Date"
-          placeholder="YYYY-MM-DD"
+          type="date"
+          InputLabelProps={{ shrink: true }}
           fullWidth
+          margin="normal"
           value={dischargeDate}
           onChange={({ target }) => setDischargeDate(target.value)}
         />
         <TextField
           label="Discharge Criteria"
           fullWidth
+          margin="normal"
           value={dischargeCriteria}
           onChange={({ target }) => setDischargeCriteria(target.value)}
         />
