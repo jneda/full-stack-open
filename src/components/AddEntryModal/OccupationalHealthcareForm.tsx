@@ -2,14 +2,21 @@ import { useState, SyntheticEvent } from "react";
 
 import { TextField, Grid, Button } from "@mui/material";
 
-import { EntryFormValues } from "../../types";
+import { Diagnosis, EntryFormValues } from "../../types";
+
+import DiagnosesSelect from "./DiagnosesSelect";
 
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
+  diagnoses: Diagnosis[];
 }
 
-const OccupationalHealthcareForm = ({ onCancel, onSubmit }: Props) => {
+const OccupationalHealthcareForm = ({
+  onCancel,
+  onSubmit,
+  diagnoses,
+}: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
@@ -61,6 +68,7 @@ const OccupationalHealthcareForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
+        <DiagnosesSelect diagnoses={diagnoses} />
         <TextField
           label="Employer Name"
           fullWidth

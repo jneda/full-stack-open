@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
-import { EntryFormValues, EntryTypes } from "../../types";
+import { EntryFormValues, EntryTypes, Diagnosis } from "../../types";
 import HealthCheckForm from "./HealthCheckForm";
 import HospitalForm from "./HospitalForm";
 import OccupationalHealthcareForm from "./OccupationalHealthcareForm";
@@ -11,11 +11,12 @@ import { splitOnUpperCase } from "../../utils";
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
+  diagnoses: Diagnosis[];
 }
 
 const entryTypeOptions = Object.values(EntryTypes).map((v) => v.toString());
 
-const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+const AddEntryForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const [entryType, setEntryType] = useState(entryTypeOptions[0]);
 
   const onEntryTypeChange = (event: SelectChangeEvent<string>) => {
@@ -29,16 +30,32 @@ const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
   let form;
   switch (entryType) {
     case "HealthCheck": {
-      form = <HealthCheckForm onCancel={onCancel} onSubmit={onSubmit} />;
+      form = (
+        <HealthCheckForm
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          diagnoses={diagnoses}
+        />
+      );
       break;
     }
     case "Hospital": {
-      form = <HospitalForm onCancel={onCancel} onSubmit={onSubmit} />;
+      form = (
+        <HospitalForm
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          diagnoses={diagnoses}
+        />
+      );
       break;
     }
     case "OccupationalHealthcare": {
       form = (
-        <OccupationalHealthcareForm onCancel={onCancel} onSubmit={onSubmit} />
+        <OccupationalHealthcareForm
+          onCancel={onCancel}
+          onSubmit={onSubmit}
+          diagnoses={diagnoses}
+        />
       );
       break;
     }

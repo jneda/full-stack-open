@@ -100,6 +100,7 @@ const PatientDetailsPage = ({ patientId }: Props) => {
         onClose={closeModal}
         error={error}
         onSubmit={submitNewEntry}
+        diagnoses={diagnoses}
       />
       {patient.entries.map((e) => (
         <EntryDetails key={e.id} entry={e} diagnoses={diagnoses} />

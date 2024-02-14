@@ -10,12 +10,15 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 
-import { EntryFormValues, HealthCheckRating } from "../../types";
+import { EntryFormValues, HealthCheckRating, Diagnosis } from "../../types";
 import { splitOnUpperCase } from "../../utils";
+
+import DiagnosesSelect from "./DiagnosesSelect";
 
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
+  diagnoses: Diagnosis[];
 }
 
 interface HealthCheckRatingOption {
@@ -37,7 +40,7 @@ const healthCheckRatingOptions: HealthCheckRatingOption[] = Object.entries(
     };
   });
 
-const HealthCheckForm = ({ onCancel, onSubmit }: Props) => {
+const HealthCheckForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
@@ -95,6 +98,7 @@ const HealthCheckForm = ({ onCancel, onSubmit }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
+        <DiagnosesSelect diagnoses={diagnoses} />
 
         <InputLabel style={{ marginTop: 20 }}>Health Check Rating</InputLabel>
         <Select
