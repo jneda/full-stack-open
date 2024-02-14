@@ -20,18 +20,23 @@ const OccupationalHealthcareForm = ({
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
+  const [selectedDiagnoses, setSelectedDiagnoses] = useState<string[]>([]);
   const [employerName, setEmployerName] = useState("");
   const [sickLeaveStartDate, setSickLeaveStartDate] = useState("");
   const [sickLeaveEndDate, setSickLeaveEndDate] = useState("");
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+    const diagnosesForEntry = diagnoses
+      .filter((d) => selectedDiagnoses.includes(d.code))
+      .map((d) => d.code);
     const newEntry: EntryFormValues = {
       type: "OccupationalHealthcare",
       description,
       date,
       specialist,
       employerName,
+      diagnosisCodes: diagnosesForEntry,
     };
     if (sickLeaveStartDate && sickLeaveEndDate) {
       newEntry.sickLeave = {
@@ -68,7 +73,11 @@ const OccupationalHealthcareForm = ({
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <DiagnosesSelect diagnoses={diagnoses} />
+        <DiagnosesSelect
+          diagnoses={diagnoses}
+          selectedDiagnoses={selectedDiagnoses}
+          setSelectedDiagnoses={setSelectedDiagnoses}
+        />
         <TextField
           label="Employer Name"
           fullWidth

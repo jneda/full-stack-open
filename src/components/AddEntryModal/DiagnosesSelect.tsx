@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import {
   InputLabel,
   OutlinedInput,
@@ -10,11 +10,15 @@ import { Diagnosis } from "../../types";
 
 interface Props {
   diagnoses: Diagnosis[];
+  selectedDiagnoses: string[];
+  setSelectedDiagnoses: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const DiagnosesSelect = ({ diagnoses }: Props) => {
-  const [selectedDiagnoses, setSelectedDiagnoses] = useState<string[]>([]);
-
+const DiagnosesSelect = ({
+  diagnoses,
+  selectedDiagnoses,
+  setSelectedDiagnoses,
+}: Props) => {
   const handleChange = (evt: SelectChangeEvent<typeof selectedDiagnoses>) => {
     const {
       target: { value },

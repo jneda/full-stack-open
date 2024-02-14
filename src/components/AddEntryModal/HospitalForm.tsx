@@ -16,16 +16,21 @@ const HospitalForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
+  const [selectedDiagnoses, setSelectedDiagnoses] = useState<string[]>([]);
   const [dischargeDate, setDischargeDate] = useState("");
   const [dischargeCriteria, setDischargeCriteria] = useState("");
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+    const diagnosesForEntry = diagnoses
+      .filter((d) => selectedDiagnoses.includes(d.code))
+      .map((d) => d.code);
     onSubmit({
       type: "Hospital",
       description,
       date,
       specialist,
+      diagnosisCodes: diagnosesForEntry,
       discharge: {
         date: dischargeDate,
         criteria: dischargeCriteria,
@@ -59,7 +64,11 @@ const HospitalForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <DiagnosesSelect diagnoses={diagnoses} />
+        <DiagnosesSelect
+          diagnoses={diagnoses}
+          selectedDiagnoses={selectedDiagnoses}
+          setSelectedDiagnoses={setSelectedDiagnoses}
+        />
         <TextField
           label="Discharge Date"
           type="date"

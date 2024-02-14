@@ -44,6 +44,7 @@ const HealthCheckForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
   const [description, setDescription] = useState("");
   const [date, setDate] = useState("");
   const [specialist, setSpecialist] = useState("");
+  const [selectedDiagnoses, setSelectedDiagnoses] = useState<string[]>([]);
   const [healthCheckRating, setHealthCheckRating] = useState(
     HealthCheckRating.Healthy
   );
@@ -63,12 +64,16 @@ const HealthCheckForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
 
   const addEntry = (event: SyntheticEvent) => {
     event.preventDefault();
+    const diagnosesForEntry = diagnoses
+      .filter((d) => selectedDiagnoses.includes(d.code))
+      .map((d) => d.code);
     onSubmit({
       type: "HealthCheck",
       description,
       date,
       specialist,
       healthCheckRating,
+      diagnosisCodes: diagnosesForEntry,
     });
   };
 
@@ -98,7 +103,11 @@ const HealthCheckForm = ({ onCancel, onSubmit, diagnoses }: Props) => {
           value={description}
           onChange={({ target }) => setDescription(target.value)}
         />
-        <DiagnosesSelect diagnoses={diagnoses} />
+        <DiagnosesSelect
+          diagnoses={diagnoses}
+          selectedDiagnoses={selectedDiagnoses}
+          setSelectedDiagnoses={setSelectedDiagnoses}
+        />
 
         <InputLabel style={{ marginTop: 20 }}>Health Check Rating</InputLabel>
         <Select
