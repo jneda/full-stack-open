@@ -1,86 +1,67 @@
-import { useState, SyntheticEvent } from "react";
+import { useState } from "react";
 
-import {
-  TextField,
-  // InputLabel,
-  // MenuItem,
-  // Select,
-  Grid,
-  Button,
-  // SelectChangeEvent,
-} from "@mui/material";
+import { InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 
-import { EntryFormValues } from "../../types";
+import { EntryFormValues, EntryTypes } from "../../types";
+import HealthCheckForm from "./HealthCheckForm";
+import HospitalForm from "./HospitalForm";
+import OccupationalHealthcareForm from "./OccupationalHealthcareForm";
+import { splitOnUpperCase } from "../../utils";
 
 interface Props {
   onCancel: () => void;
   onSubmit: (values: EntryFormValues) => void;
 }
 
-const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [specialist, setSpecialist] = useState("");
+const entryTypeOptions = Object.values(EntryTypes).map((v) => v.toString());
 
-  const addPatient = (event: SyntheticEvent) => {
+const AddEntryForm = ({ onCancel, onSubmit }: Props) => {
+  const [entryType, setEntryType] = useState(entryTypeOptions[0]);
+
+  const onEntryTypeChange = (event: SelectChangeEvent<string>) => {
     event.preventDefault();
-    onSubmit({
-      type: "HealthCheck",
-      description,
-      date,
-      specialist,
-      healthCheckRating: 0,
-    });
+    if (typeof event.target.value === "string") {
+      const value = event.target.value;
+      setEntryType(value);
+    }
   };
+
+  let form;
+  switch (entryType) {
+    case "HealthCheck": {
+      form = <HealthCheckForm onCancel={onCancel} onSubmit={onSubmit} />;
+      break;
+    }
+    case "Hospital": {
+      form = <HospitalForm onCancel={onCancel} onSubmit={onSubmit} />;
+      break;
+    }
+    case "OccupationalHealthcare": {
+      form = (
+        <OccupationalHealthcareForm onCancel={onCancel} onSubmit={onSubmit} />
+      );
+      break;
+    }
+    default:
+      throw new Error(`Unexpected value: ${entryType}`);
+  }
 
   return (
     <div>
-      <form onSubmit={addPatient}>
-        <TextField
-          label="Date"
-          placeholder="YYYY-MM-DD"
-          fullWidth
-          value={date}
-          onChange={({ target }) => setDate(target.value)}
-        />
-        <TextField
-          label="Specialist"
-          fullWidth
-          value={specialist}
-          onChange={({ target }) => setSpecialist(target.value)}
-        />
-        <TextField
-          label="Description"
-          fullWidth
-          value={description}
-          onChange={({ target }) => setDescription(target.value)}
-        />
-
-        <Grid>
-          <Grid item>
-            <Button
-              color="secondary"
-              variant="contained"
-              style={{ float: "left" }}
-              type="button"
-              onClick={onCancel}
-            >
-              Cancel
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              style={{
-                float: "right",
-              }}
-              type="submit"
-              variant="contained"
-            >
-              Add
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+      <InputLabel style={{ marginTop: 20 }}>Entry Type</InputLabel>
+      <Select
+        label="Entry Type"
+        fullWidth
+        value={entryType}
+        onChange={onEntryTypeChange}
+      >
+        {entryTypeOptions.map((option) => (
+          <MenuItem key={option} value={option}>
+            {splitOnUpperCase(option)}
+          </MenuItem>
+        ))}
+      </Select>
+      {form}
     </div>
   );
 };
